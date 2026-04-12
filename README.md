@@ -169,7 +169,7 @@ This project is licensed under the **MIT License** - see the LICENSE file for de
 
 **Gaurav**
 - GitHub: [@gaurav7080](https://github.com/gaurav7080)
-- Email: gaurav@medilab.com
+- Email: gauravrajsaidnagar@gmail.com
 - Repository: [MediLab](https://github.com/gaurav7080/medilab)
 
 ## 📞 Support & Issues
