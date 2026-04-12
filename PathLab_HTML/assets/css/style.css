@@ -1,0 +1,503 @@
+/* Custom styles for MediLab - Enhanced Version */
+
+:root {
+    --primary-color: #2196F3;
+    --secondary-color: #4CAF50;
+    --danger-color: #E74C3C;
+    --warning-color: #FFC107;
+    --info-color: #17a2b8;
+    --success-color: #4CAF50;
+    --light-bg: #f8f9fa;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    transition: all 0.3s ease;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    background: #fff;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 25px;
+    font-weight: 600;
+    padding: 10px 25px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2, var(--primary-color));
+    color: white;
+}
+
+.btn-lg {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+}
+
+.btn i {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Sidebar */
+.sidebar {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+}
+
+.sidebar h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 12px 15px;
+    margin: 5px 0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+    border-left-color: white;
+}
+
+/* Main content */
+.main {
+    padding: 30px;
+    background: var(--light-bg);
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: var(--shadow);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+}
+
+/* Tables */
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.table th {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.table td {
+    border: none;
+    color: #555;
+    padding: 12px 15px;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.booking-row {
+    border-bottom: 1px solid #eee;
+}
+
+.booking-row:hover {
+    background: #f9f9f9;
+}
+
+.status-select {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+.alert-animated {
+    animation: slideIn 0.3s ease;
+}
+
+.alert-removing {
+    animation: slideOut 0.3s ease;
+}
+
+.alert-icon {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.alert-success {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--success-color);
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-danger {
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--danger-color);
+    border-left: 4px solid var(--danger-color);
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+    border-left: 4px solid var(--warning-color);
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.1);
+    color: var(--info-color);
+    border-left: 4px solid var(--info-color);
+}
+
+/* Badges */
+.badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, var(--warning-color), #FFA500);
+    color: white;
+}
+
+.badge-success {
+    background: linear-gradient(135deg, var(--success-color), #45a049);
+    color: white;
+}
+
+.badge-info {
+    background: linear-gradient(135deg, var(--info-color), #138496);
+    color: white;
+}
+
+/* Text Colors */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2) !important;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, #343a40, #495057);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    border-top: 2px solid var(--primary-color);
+}
+
+/* Booking Cards Styling */
+.booking-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.booking-card-approved {
+    border-left: 4px solid var(--success-color);
+}
+
+.booking-card-completed {
+    border-left: 4px solid var(--info-color);
+}
+
+.booking-card .btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.booking-card .btn-outline-primary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.booking-card .btn-outline-success {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.booking-card .btn-outline-success:hover {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.booking-card .btn-outline-info {
+    border-color: var(--info-color);
+    color: var(--info-color);
+}
+
+.booking-card .btn-outline-info:hover {
+    background: var(--info-color);
+    border-color: var(--info-color);
+    color: white;
+}
+
+/* Admin Dashboard Styling */
+.admin-header {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.admin-header h3 {
+    color: white;
+    margin: 0;
+}
+
+.admin-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 5px;
+}
+
+.admin-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.admin-card-pending {
+    border-left: 4px solid var(--warning-color);
+}
+
+.admin-card-approved {
+    border-left: 4px solid var(--success-color);
+}
+
+.admin-card-completed {
+    border-left: 4px solid var(--info-color);
+}
+
+.admin-card-reports {
+    border-left: 4px solid var(--danger-color);
+}
+
+.admin-card .btn-outline-warning {
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+.admin-card .btn-outline-warning:hover {
+    background: var(--warning-color);
+    border-color: var(--warning-color);
+    color: white;
+}
+
+.admin-card .btn-outline-success {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.admin-card .btn-outline-success:hover {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.admin-card .btn-outline-danger {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.admin-card .btn-outline-danger:hover {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        min-width: 80px;
+        padding: 15px 10px;
+    }
+    
+    .sidebar h2 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    
+    .sidebar a {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .main {
+        padding: 15px;
+    }
+    
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .table th, .table td {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        min-width: 60px;
+    }
+    
+    .sidebar h2 {
+        display: none;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .main {
+        padding: 10px;
+    }
+    
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
