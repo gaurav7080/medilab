@@ -473,7 +473,7 @@ html {
     color: white;
 }
 
-/* Mobile Hamburger Menu - Enhanced */
+/* Mobile Hamburger Menu - Enhanced with Parallel Lines */
 .sidebar-toggle {
     display: none;
     background: none;
@@ -483,16 +483,29 @@ html {
     transition: all 0.3s ease;
     z-index: 1001;
     position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.sidebar-toggle:active {
-    background: rgba(33, 150, 243, 0.1);
+.sidebar-toggle:hover {
+    background: rgba(33, 150, 243, 0.08);
     border-radius: 8px;
 }
 
+.sidebar-toggle:active {
+    background: rgba(33, 150, 243, 0.15);
+    border-radius: 8px;
+    transform: scale(0.98);
+}
+
+/* Three Parallel Lines */
 .sidebar-toggle span {
     display: block;
-    width: 24px;
+    width: 26px;
     height: 2.5px;
     background: var(--primary-color);
     margin: 5px 0;
@@ -500,8 +513,24 @@ html {
     border-radius: 2px;
 }
 
+/* Line 1 - Top Line */
+.sidebar-toggle span:nth-child(1) {
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Line 2 - Middle Line */
+.sidebar-toggle span:nth-child(2) {
+    transition: opacity 0.3s ease;
+}
+
+/* Line 3 - Bottom Line */
+.sidebar-toggle span:nth-child(3) {
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Animation - When Menu is Active (Transform to X) */
 .sidebar-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(10px, 10px);
+    transform: rotate(45deg) translate(8px, 8px);
     background: white;
 }
 
@@ -511,7 +540,7 @@ html {
 }
 
 .sidebar-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: rotate(-45deg) translate(8px, -8px);
     background: white;
 }
 
@@ -840,44 +869,13 @@ html {
         font-size: 1.1rem;
     }
     
-    /* Better search/filter layout for tablets */
-    .row .col-md-6 {
-        flex: 0 0 100%;
-        max-width: 100%;
-        margin-bottom: 12px;
-    }
-    
     .input-group {
-        width: 100%;
-        display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
     }
     
     .input-group-prepend {
-        flex-shrink: 0;
-    }
-    
-    .input-group-text {
-        padding: 11px 12px;
-        background: #f8f9fa;
-        border: 2px solid #e0e0e0;
-        border-right: none;
-        border-radius: 8px 0 0 8px;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .input-group .form-control {
-        border-radius: 0 8px 8px 0;
-        border-left: none;
-        min-width: 0;
-        flex: 1 1 auto;
-    }
-    
-    .input-group .form-control:focus {
-        border-left: 2px solid var(--primary-color);
+        width: 100%;
+        margin-bottom: 8px;
     }
 }
 
@@ -904,31 +902,19 @@ html {
     }
     
     .sidebar-toggle {
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
         padding: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-    
-    .sidebar-toggle:hover {
-        background: rgba(33, 150, 243, 0.08);
-    }
-    
-    .sidebar-toggle:active {
-        background: rgba(33, 150, 243, 0.15);
-        transform: scale(0.95);
     }
     
     .sidebar-toggle span {
-        width: 22px;
-        height: 2.5px;
-        margin: 4px 0;
-        flex-shrink: 0;
+        width: 20px;
+        height: 2px;
+        margin: 3.5px 0;
     }
     
     .sidebar {
@@ -1080,68 +1066,19 @@ html {
     
     .form-control {
         font-size: 16px;
-        padding: 11px 12px;
+        padding: 12px;
         border-radius: 8px;
         border: 2px solid #e0e0e0;
         width: 100%;
         transition: all 0.3s ease;
         -webkit-appearance: none;
         appearance: none;
-        line-height: 1.5;
-        color: #333;
-    }
-    
-    .form-control::placeholder {
-        color: #999;
-        opacity: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
     
     .form-control:focus {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
         outline: none;
-    }
-    
-    /* Improved search bar styling */
-    .input-group {
-        width: 100%;
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: stretch;
-    }
-    
-    .input-group-prepend {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-    }
-    
-    .input-group-text {
-        padding: 11px 12px;
-        background: #f8f9fa;
-        border: 2px solid #e0e0e0;
-        border-right: none;
-        border-radius: 8px 0 0 8px;
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 44px;
-    }
-    
-    .input-group .form-control {
-        border-radius: 0 8px 8px 0;
-        border-left: none;
-        min-width: 0;
-        flex: 1 1 auto;
-        padding: 10px 12px;
-    }
-    
-    .input-group .form-control:focus {
-        border-left: 2px solid var(--primary-color);
     }
     
     .table {
@@ -1354,52 +1291,5 @@ html {
     .admin-header {
         padding: 12px;
         border-radius: 8px;
-    }
-
-    .sidebar-toggle {
-        width: 44px;
-        height: 44px;
-        padding: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 4px 0 0;
-        border-radius: 5px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .sidebar-toggle:hover {
-        background: rgba(33, 150, 243, 0.1);
-    }
-
-    .sidebar-toggle:active {
-        background: rgba(33, 150, 243, 0.2);
-        transform: scale(0.92);
-    }
-
-    .sidebar-toggle span {
-        width: 20px;
-        height: 2px;
-        background: #333;
-        margin: 4px 0;
-        display: block;
-        flex-shrink: 0;
-        border-radius: 2px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .sidebar-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(8px, 8px);
-    }
-
-    .sidebar-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .sidebar-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -7px);
     }
 }
