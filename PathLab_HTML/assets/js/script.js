@@ -8,6 +8,115 @@ const VALIDATION_PATTERNS = {
     name: /^[a-zA-Z ]{2,50}$/
 };
 
+// Mobile Hamburger Menu Toggle - Enhanced
+function initializeMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
+    
+    // Create overlay if it doesn't exist
+    if (!document.querySelector('.mobile-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'mobile-overlay';
+        document.body.appendChild(overlay);
+    }
+    
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    if (toggle) {
+        // Toggle on button click
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+        
+        // Close menu when overlay is clicked
+        overlay.addEventListener('click', () => {
+            closeMenu();
+        });
+        
+        // Close menu when a link is clicked
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeMenu();
+            });
+        });
+        
+        // Prevent closing when clicking sidebar
+        sidebar.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        // Close menu on window resize (when going back to desktop)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1023) {
+                closeMenu();
+            }
+        });
+        
+        // Prevent body scroll when menu is open
+        document.addEventListener('touchmove', (e) => {
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Keyboard support - Escape key to close menu
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    }
+}
+
+function toggleMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (sidebar.classList.contains('active')) {
+        closeMenu();
+    } else {
+        openMenu();
+    }
+}
+
+function openMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    sidebar.classList.add('active');
+    toggle.classList.add('active');
+    overlay.classList.add('active');
+    
+    // Haptic feedback on supported devices
+    if (navigator.vibrate) {
+        navigator.vibrate(10);
+    }
+    
+    // Add focus to sidebar for accessibility
+    const firstLink = sidebar.querySelector('a');
+    if (firstLink) {
+        firstLink.focus();
+    }
+}
+
+function closeMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    sidebar.classList.remove('active');
+    toggle.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Return focus to toggle button
+    if (toggle) {
+        toggle.focus();
+    }
+}
+
 // Session Manager using localStorage
 class SessionManager {
     static setUser(user) {
@@ -49,7 +158,7 @@ function initializeSampleData() {
 
     if (!localStorage.getItem('users')) {
         const users = [
-            { id: 1, name: 'Admin Alpha', email: 'admin-alpha@medilab.com', password: 'Admin@123', role: 'Patient', labId: 1, phone: '9876543210' },
+            { id: 1, name: 'Admin Alpha', email: 'admin-alpha@medilab.com', password: 'Admin@123', role: 'Admin', labId: 1, phone: '9876543210' },
             { id: 2, name: 'Admin Beta', email: 'admin-beta@medilab.com', password: 'Admin@123', role: 'Admin', labId: 2, phone: '9876543211' },
             { id: 3, name: 'Rajesh Kumar', email: 'rajesh.kumar@email.com', password: 'Patient@123', role: 'Patient', phone: '9876543212' },
             { id: 4, name: 'Priya Singh', email: 'priya.singh@email.com', password: 'Patient@123', role: 'Patient', phone: '9876543213' },
@@ -636,6 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSampleData();
     checkAuth();
     loadSidebar();
+    initializeMobileMenu();
     
     if (document.getElementById('welcome')) loadDashboard();
     if (document.getElementById('bookingsTable')) loadBookings();
