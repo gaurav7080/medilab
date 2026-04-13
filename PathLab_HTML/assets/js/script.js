@@ -49,7 +49,7 @@ function initializeSampleData() {
 
     if (!localStorage.getItem('users')) {
         const users = [
-            { id: 1, name: 'Admin Alpha', email: 'admin-alpha@medilab.com', password: 'Admin@123', role: 'Admin', labId: 1, phone: '9876543210' },
+            { id: 1, name: 'Admin Alpha', email: 'admin-alpha@medilab.com', password: 'Admin@123', role: 'Patient', labId: 1, phone: '9876543210' },
             { id: 2, name: 'Admin Beta', email: 'admin-beta@medilab.com', password: 'Admin@123', role: 'Admin', labId: 2, phone: '9876543211' },
             { id: 3, name: 'Rajesh Kumar', email: 'rajesh.kumar@email.com', password: 'Patient@123', role: 'Patient', phone: '9876543212' },
             { id: 4, name: 'Priya Singh', email: 'priya.singh@email.com', password: 'Patient@123', role: 'Patient', phone: '9876543213' },
