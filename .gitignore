@@ -1,0 +1,21 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor folders and files
+.vscode/
+*.swp
+*~
+
+# Dependency directories
+node_modules/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Generated files
+*.tmp
