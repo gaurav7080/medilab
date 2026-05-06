@@ -638,7 +638,8 @@ async function loadUploadReports() {
 function checkAuth() {
     const user = SessionManager.getUser();
     const currentPage = window.location.pathname.split('/').pop();
-    if (!user && currentPage !== 'index.html' && currentPage !== 'register.html' && currentPage !== '') {
+    const publicPages = ['index.html', 'login.html', 'register.html', 'explore.html', ''];
+    if (!user && !publicPages.includes(currentPage)) {
         window.location.href = 'index.html';
     }
 }
