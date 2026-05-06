@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -10,21 +11,22 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
+
+<body class="theme-dark">
     <div class="d-flex">
         <div class="sidebar"></div>
         <div class="main flex-fill">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <nav class="navbar navbar-expand-lg shadow-sm">
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <span class="navbar-brand mb-0 h1"><i class="fas fa-tachometer-alt text-primary"></i> Dashboard</span>
+                <span class="navbar-brand mb-0 h1"><i class="fas fa-tachometer-alt text-primary pulse-neon"></i> Dashboard</span>
             </nav>
             <div class="container-fluid mt-4">
                 <h1 id="welcome" class="mb-4">Welcome to MediLab System 🚀</h1>
-                
+
                 <!-- PATIENT DASHBOARD -->
                 <div id="patientDashboard" style="display: none;">
                     <!-- Booking Statistics Section -->
@@ -35,92 +37,112 @@
                                     <i class="fas fa-list fa-3x text-primary mb-3"></i>
                                     <h5 class="card-title">Total Bookings</h5>
                                     <p class="card-text display-4 font-weight-bold" id="totalBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewBookingsByStatus('All')"><i class="fas fa-eye"></i> View All</button>
+                                    <button class="btn btn-sm btn-outline-primary mt-2"
+                                        onclick="viewBookingsByStatus('All')"><i class="fas fa-eye"></i> View
+                                        All</button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4 mb-3">
                             <div class="card text-center booking-card booking-card-approved">
                                 <div class="card-body">
                                     <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                                     <h5 class="card-title">Approved Bookings</h5>
-                                    <p class="card-text display-4 font-weight-bold text-success" id="approvedBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-success mt-2" onclick="viewBookingsByStatus('Approved')"><i class="fas fa-eye"></i> View Approved</button>
+                                    <p class="card-text display-4 font-weight-bold text-success" id="approvedBookings">0
+                                    </p>
+                                    <button class="btn btn-sm btn-outline-success mt-2"
+                                        onclick="viewBookingsByStatus('Approved')"><i class="fas fa-eye"></i> View
+                                        Approved</button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4 mb-3">
                             <div class="card text-center booking-card booking-card-completed">
                                 <div class="card-body">
                                     <i class="fas fa-flag-checkered fa-3x text-info mb-3"></i>
                                     <h5 class="card-title">Completed Bookings</h5>
-                                    <p class="card-text display-4 font-weight-bold text-info" id="completedBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-info mt-2" onclick="viewBookingsByStatus('Completed')"><i class="fas fa-eye"></i> View Completed</button>
+                                    <p class="card-text display-4 font-weight-bold text-info" id="completedBookings">0
+                                    </p>
+                                    <button class="btn btn-sm btn-outline-info mt-2"
+                                        onclick="viewBookingsByStatus('Completed')"><i class="fas fa-eye"></i> View
+                                        Completed</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-4">
-                        <a href="book-test.html" class="btn btn-primary btn-lg" id="bookTestBtn"><i class="fas fa-plus-circle"></i> Book a New Test</a>
+                        <a href="book-test.html" class="btn btn-primary btn-lg" id="bookTestBtn"><i
+                                class="fas fa-plus-circle"></i> Book a New Test</a>
                     </div>
                 </div>
-                
+
                 <!-- LAB ADMIN DASHBOARD -->
                 <div id="adminDashboard" style="display: none;">
                     <div class="admin-header mb-4">
                         <h3><i class="fas fa-hospital"></i> Lab Administration Dashboard</h3>
                         <p id="labInfo" class="text-muted"></p>
                     </div>
-                    
+
                     <div class="row mb-5">
                         <div class="col-md-3 mb-3">
                             <div class="card text-center admin-card admin-card-pending">
                                 <div class="card-body">
                                     <i class="fas fa-hourglass-half fa-3x text-warning mb-3"></i>
                                     <h5 class="card-title">Pending Bookings</h5>
-                                    <p class="card-text display-4 font-weight-bold text-warning" id="pendingBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-warning mt-2" onclick="viewBookingsByStatus('Pending')"><i class="fas fa-eye"></i> View</button>
+                                    <p class="card-text display-4 font-weight-bold text-warning" id="pendingBookings">0
+                                    </p>
+                                    <button class="btn btn-sm btn-outline-warning mt-2"
+                                        onclick="viewBookingsByStatus('Pending')"><i class="fas fa-eye"></i>
+                                        View</button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-3 mb-3">
                             <div class="card text-center admin-card admin-card-approved">
                                 <div class="card-body">
                                     <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                                     <h5 class="card-title">Approved Bookings</h5>
-                                    <p class="card-text display-4 font-weight-bold text-success" id="adminApprovedBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-success mt-2" onclick="viewBookingsByStatus('Approved')"><i class="fas fa-eye"></i> View</button>
+                                    <p class="card-text display-4 font-weight-bold text-success"
+                                        id="adminApprovedBookings">0</p>
+                                    <button class="btn btn-sm btn-outline-success mt-2"
+                                        onclick="viewBookingsByStatus('Approved')"><i class="fas fa-eye"></i>
+                                        View</button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-3 mb-3">
                             <div class="card text-center admin-card admin-card-completed">
                                 <div class="card-body">
                                     <i class="fas fa-flag-checkered fa-3x text-info mb-3"></i>
                                     <h5 class="card-title">Completed Bookings</h5>
-                                    <p class="card-text display-4 font-weight-bold text-info" id="adminCompletedBookings">0</p>
-                                    <button class="btn btn-sm btn-outline-info mt-2" onclick="viewBookingsByStatus('Completed')"><i class="fas fa-eye"></i> View</button>
+                                    <p class="card-text display-4 font-weight-bold text-info"
+                                        id="adminCompletedBookings">0</p>
+                                    <button class="btn btn-sm btn-outline-info mt-2"
+                                        onclick="viewBookingsByStatus('Completed')"><i class="fas fa-eye"></i>
+                                        View</button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-3 mb-3">
                             <div class="card text-center admin-card admin-card-reports">
                                 <div class="card-body">
                                     <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
                                     <h5 class="card-title">Reports Uploaded</h5>
                                     <p class="card-text display-4 font-weight-bold text-danger" id="totalReports">0</p>
-                                    <button class="btn btn-sm btn-outline-danger mt-2" onclick="goToPage('upload-reports.html')"><i class="fas fa-plus"></i> Upload</button>
+                                    <button class="btn btn-sm btn-outline-danger mt-2"
+                                        onclick="goToPage('upload-reports.html')"><i class="fas fa-plus"></i>
+                                        Upload</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
@@ -128,18 +150,23 @@
                                     <h5 class="mb-0"><i class="fas fa-tasks"></i> Quick Actions</h5>
                                 </div>
                                 <div class="card-body">
-                                    <a href="bookings.html" class="btn btn-outline-primary mr-2"><i class="fas fa-list"></i> Manage Bookings</a>
-                                    <a href="upload-reports.html" class="btn btn-outline-danger mr-2"><i class="fas fa-upload"></i> Upload Reports</a>
-                                    <a href="reports.html" class="btn btn-outline-success mr-2"><i class="fas fa-file-pdf"></i> View Reports</a>
-                                    <a href="manage-tests.html" class="btn btn-outline-success mr-2"><i class="fas fa-flask-vial"></i> Manage Tests</a>
+                                    <a href="bookings.html" class="btn btn-outline-primary mr-2"><i
+                                            class="fas fa-list"></i> Manage Bookings</a>
+                                    <a href="upload-reports.html" class="btn btn-outline-danger mr-2"><i
+                                            class="fas fa-upload"></i> Upload Reports</a>
+                                    <a href="reports.html" class="btn btn-outline-success mr-2"><i
+                                            class="fas fa-file-pdf"></i> View Reports</a>
+                                    <a href="manage-tests.html" class="btn btn-outline-success mr-2"><i
+                                            class="fas fa-flask-vial"></i> Manage Tests</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Booking View Modal -->
-                <div class="modal fade" id="bookingViewModal" tabindex="-1" role="dialog" aria-labelledby="bookingViewLabel" aria-hidden="true">
+                <div class="modal fade" id="bookingViewModal" tabindex="-1" role="dialog"
+                    aria-labelledby="bookingViewLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -177,4 +204,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
+
 </html>
