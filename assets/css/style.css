@@ -529,6 +529,170 @@ option {
     color: var(--primary-color);
     transform: translateX(5px);
 }
+
+/* Responsive sidebar + dashboard layout */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    position: relative;
+    flex-shrink: 0;
+    background: rgba(11, 15, 25, 0.95);
+    border-right: 1px solid rgba(0, 242, 254, 0.12);
+    box-shadow: inset -2px 0 20px rgba(0, 242, 254, 0.05);
+    transition: transform 0.3s ease, left 0.3s ease;
+}
+.sidebar.active {
+    transform: none;
+}
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1040;
+}
+.mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.sidebar-toggle {
+    width: 46px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+.sidebar-toggle.active {
+    background: rgba(0, 242, 254, 0.12);
+}
+.sidebar-toggle span {
+    width: 18px;
+    height: 2px;
+    background: var(--primary-color);
+    border-radius: 999px;
+    transition: all 0.3s ease;
+}
+.navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.profile-dropdown {
+    width: auto;
+}
+.profile-dropdown .btn-profile {
+    min-width: 180px;
+}
+
+@media (max-width: 1199.98px) {
+    .sidebar { width: 220px; }
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        bottom: 0;
+        width: 260px;
+        z-index: 1050;
+        box-shadow: 5px 0 35px rgba(0, 0, 0, 0.45);
+    }
+    .sidebar.active {
+        left: 0;
+    }
+    .main {
+        padding: 24px 1.4rem;
+    }
+    .navbar {
+        width: 100%;
+    }
+    .profile-dropdown,
+    .profile-dropdown .btn-profile {
+        width: 100%;
+    }
+    .profile-dropdown .btn-profile {
+        justify-content: flex-start;
+    }
+    .profile-menu {
+        left: 1rem;
+        right: 1rem;
+        min-width: unset;
+        width: calc(100% - 2rem);
+        max-width: 320px;
+    }
+    .container,
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    .footer {
+        padding: 18px 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main {
+        padding: 20px 1rem;
+    }
+    .card-body {
+        padding: 1.4rem;
+    }
+    .booking-card,
+    .admin-card {
+        padding: 24px 20px;
+    }
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .profile-menu {
+        width: calc(100% - 2rem);
+        left: 1rem;
+        right: 1rem;
+    }
+    .navbar .dropdown,
+    .profile-dropdown .btn-profile {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+    .sidebar.active {
+        left: 0;
+    }
+    .modal-dialog {
+        margin: 1.25rem;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    .table td,
+    .table th {
+        white-space: nowrap;
+    }
+    .footer {
+        padding: 16px 0;
+    }
+    .card {
+        border-radius: 1rem;
+    }
+}
 .profile-menu .dropdown-divider {
     border-top: 1px solid var(--border-glass);
     margin: 5px 0;
