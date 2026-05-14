@@ -16,7 +16,7 @@ exports.getBookings = async (req, res) => {
 
 exports.createBooking = async (req, res) => {
     try {
-        const { labId, testName, testDate, testTime, notes } = req.body;
+        const { labId, testName, testDate, testTime, notes, patientName } = req.body;
         if (!testName || testName.length < 3) return res.status(400).json({ error: 'Test name must be at least 3 chars' });
         if (!labId) return res.status(400).json({ error: 'Please select a lab' });
 
@@ -25,7 +25,7 @@ exports.createBooking = async (req, res) => {
 
         const { data: booking, error } = await supabase.from('bookings').insert({
             user_id: req.user.id, lab_id: labId, test_name: testName,
-            patient_name: req.user.name, patient_email: req.user.email,
+            patient_name: patientName || req.user.name, patient_email: req.user.email,
             test_date: testDate || '', test_time: testTime || '', notes: notes || '', status: 'Pending'
         }).select('*, labs(name, location)').single();
         if (error) throw error;

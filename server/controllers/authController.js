@@ -70,3 +70,31 @@ exports.getMe = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, phone, gender, blood_group, dob } = req.body;
+        
+        const updates = { updated_at: new Date().toISOString() };
+        if (name !== undefined) updates.name = name;
+        if (phone !== undefined) updates.phone = phone;
+        if (gender !== undefined) updates.gender = gender;
+        if (blood_group !== undefined) updates.blood_group = blood_group;
+        if (dob !== undefined) updates.dob = dob || null;
+
+        const { data: user, error } = await supabase
+            .from('users')
+            .update(updates)
+            .eq('id', req.user.id)
+            .select('*, labs(*)')
+            .single();
+
+        if (error) throw error;
+        
+        if (user) delete user.password;
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ error: 'Server error updating profile' });
+    }
+};

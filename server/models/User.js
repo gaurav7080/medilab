@@ -42,7 +42,24 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['Active', 'Pending'],
         default: 'Active'
-    }
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other']
+    },
+    dob: {
+        type: Date
+    },
+    bloodGroup: {
+        type: String
+    },
+    familyMembers: [{
+        name: { type: String, required: true },
+        relation: { type: String, required: true },
+        age: { type: Number, required: true },
+        gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
+        bloodGroup: { type: String }
+    }]
 }, {
     timestamps: true
 });

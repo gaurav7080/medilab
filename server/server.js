@@ -25,6 +25,7 @@ app.use('/api/tests', require('./routes/tests'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/family', require('./routes/family'));
 
 // ─── Health Check ────────────────────────────────────────
 app.get('/api/health', (req, res) => {
@@ -32,8 +33,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // ─── Catch-all: serve index.html ─────────────────────────
-app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+app.all('*', (req, res) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
         res.sendFile(path.join(__dirname, '..', 'index.html'));
     } else {
         res.status(404).json({ error: 'Route not found' });

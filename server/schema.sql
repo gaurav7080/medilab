@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS users (
     lab_id UUID REFERENCES labs(id) ON DELETE SET NULL,
     phone VARCHAR(15) DEFAULT '',
     status VARCHAR(10) DEFAULT 'Active' CHECK (status IN ('Active', 'Pending')),
+    gender VARCHAR(20) CHECK (gender IN ('Male', 'Female', 'Other')),
+    dob DATE,
+    blood_group VARCHAR(10),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -75,6 +78,19 @@ CREATE TABLE IF NOT EXISTS reports (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ─── Family Members Table ─────────────────────────────────
+CREATE TABLE IF NOT EXISTS family_members (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    relation VARCHAR(50) NOT NULL,
+    age INT NOT NULL,
+    gender VARCHAR(20) NOT NULL CHECK (gender IN ('Male', 'Female', 'Other')),
+    blood_group VARCHAR(10),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ─── Indexes ─────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_tests_lab_id ON tests(lab_id);
@@ -100,3 +116,12 @@ CREATE POLICY "Service role full access" ON users FOR ALL USING (true) WITH CHEC
 CREATE POLICY "Service role full access" ON tests FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON bookings FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON reports FOR ALL USING (true) WITH CHECK (true);
+
+ALTER TABLE family_members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role full access" ON family_members FOR ALL USING (true) WITH CHECK (true);
+
+-- ─── Migrations for Existing Tables ────────────────────────
+-- Run these if your 'users' table is already created
+ALTER TABLE users ADD COLUMN IF NOT EXISTS gender VARCHAR(20) CHECK (gender IN ('Male', 'Female', 'Other'));
+ALTER TABLE users ADD COLUMN IF NOT EXISTS dob DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS blood_group VARCHAR(10);
