@@ -413,6 +413,8 @@
 .footer-bottom p { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
 
 /* ── RESPONSIVE ── */
+.mobile-auth-links { display: none; }
+
 @media (max-width: 991px) {
     .explore-nav-links, .explore-nav-actions { display: none; }
     .explore-hamburger { display: flex; }
@@ -420,6 +422,11 @@
         display: flex; flex-direction: column; position: absolute;
         top: 100%; left: 0; right: 0; background: rgba(11,15,25,0.97);
         backdrop-filter: blur(20px); padding: 20px; border-bottom: 1px solid var(--border-glass);
+    }
+    .mobile-auth-links {
+        display: flex; flex-direction: column; gap: 12px; 
+        margin-top: 10px; padding-top: 16px; 
+        border-top: 1px solid rgba(255,255,255,0.1);
     }
     .hero-section { flex-direction: column; padding: 120px 20px 60px; gap: 40px; }
     .hero-title { font-size: 2.6rem; }

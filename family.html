@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#2196F3">
+    <title>MediLab - Family Members</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="theme-dark">
+    <div class="d-flex">
+        <div class="sidebar"></div>
+        <div class="main flex-fill">
+            <nav class="navbar navbar-expand-lg shadow-sm d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <span class="navbar-brand mb-0 h1"><i class="fas fa-users text-info pulse-neon"></i> Family Members</span>
+                </div>
+                
+                <!-- Profile Dropdown -->
+                <div class="dropdown profile-dropdown">
+                    <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=User&background=00f2fe&color=000" alt="Profile" class="profile-avatar" id="navProfilePic">
+                        <span class="profile-name" id="navProfileName">User</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow-lg profile-menu" aria-labelledby="profileMenuButton">
+                        <div class="dropdown-header d-flex align-items-center">
+                            <div class="header-avatar mr-3">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white" id="menuProfileName">User</h6>
+                                <small class="text-muted" id="menuProfileRole">Patient</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="profile.html"><i class="fas fa-user-edit text-primary"></i> Edit Profile</a>
+                        <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Subscription / Pro</a>
+                        <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
+                        <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> Reports</a>
+                        <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Profile History</a>
+                        <a class="dropdown-item" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="container-fluid mt-4">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h2><i class="fas fa-users"></i> Manage Family Members</h2>
+                        <p class="text-muted">Add your family members to easily book tests on their behalf.</p>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addFamilyModal">
+                            <i class="fas fa-user-plus"></i> Add Member
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row" id="familyGrid">
+                    <!-- Family Members will be loaded here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Family Modal -->
+    <div class="modal fade" id="addFamilyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus text-primary"></i> Add Family Member</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="addFamilyForm" onsubmit="addFamilyMemberSubmit(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" id="famName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Relation</label>
+                            <select class="form-control" id="famRelation" required>
+                                <option value="">Select Relation</option>
+                                <option>Spouse</option>
+                                <option>Child</option>
+                                <option>Parent</option>
+                                <option>Sibling</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" class="form-control" id="famAge" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select class="form-control" id="famGender" required>
+                                <option value="">Select Gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Blood Group</label>
+                            <select class="form-control" id="famBloodGroup">
+                                <option value="">Unknown / Select</option>
+                                <option>A+</option><option>A-</option>
+                                <option>B+</option><option>B-</option>
+                                <option>O+</option><option>O-</option>
+                                <option>AB+</option><option>AB-</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Member</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

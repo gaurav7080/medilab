@@ -16,13 +16,43 @@
     <div class="d-flex">
         <div class="sidebar"></div>
         <div class="main flex-fill">
-            <nav class="navbar navbar-expand-lg shadow-sm">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <span class="navbar-brand mb-0 h1"><i class="fas fa-tachometer-alt text-primary pulse-neon"></i> Dashboard</span>
+            <nav class="navbar navbar-expand-lg shadow-sm d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <span class="navbar-brand mb-0 h1"><i class="fas fa-tachometer-alt text-primary pulse-neon"></i> Dashboard</span>
+                </div>
+                
+                <!-- Profile Dropdown -->
+                <div class="dropdown profile-dropdown">
+                    <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=User&background=00f2fe&color=000" alt="Profile" class="profile-avatar" id="navProfilePic">
+                        <span class="profile-name" id="navProfileName">User</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow-lg profile-menu" aria-labelledby="profileMenuButton">
+                        <div class="dropdown-header d-flex align-items-center">
+                            <div class="header-avatar mr-3">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white" id="menuProfileName">User</h6>
+                                <small class="text-muted" id="menuProfileRole">Patient</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="profile.html"><i class="fas fa-user-edit text-primary"></i> Edit Profile</a>
+                        <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Subscription / Pro</a>
+                        <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
+                        <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> Reports</a>
+                        <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Profile History</a>
+                        <a class="dropdown-item" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
             </nav>
             <div class="container-fluid mt-4">
                 <h1 id="welcome" class="mb-4">Welcome to MediLab System 🚀</h1>

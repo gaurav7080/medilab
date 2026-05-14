@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="theme-color" content="#2196F3">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>MediLab - Upload Reports</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediLab - Subscription</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -17,12 +15,11 @@
             <nav class="navbar navbar-expand-lg shadow-sm d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <button class="sidebar-toggle" id="sidebarToggle">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <span></span><span></span><span></span>
                     </button>
-                    <span class="navbar-brand mb-0 h1"><i class="fas fa-upload text-primary pulse-neon"></i> Upload Report</span>
+                    <span class="navbar-brand mb-0 h1"><i class="fas fa-crown text-warning pulse-neon"></i> Subscription</span>
                 </div>
+                
                 <!-- Profile Dropdown -->
                 <div class="dropdown profile-dropdown">
                     <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,25 +48,22 @@
                     </div>
                 </div>
             </nav>
-            <div class="container-fluid mt-4">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="card">
+            <div class="container-fluid mt-4 text-center">
+                <h2><i class="fas fa-gem text-primary"></i> Upgrade to Pro</h2>
+                <p class="text-muted">Get priority test bookings, 20% off on all lab tests, and unlimited digital health records storage.</p>
+                
+                <div class="row justify-content-center mt-5">
+                    <div class="col-md-4">
+                        <div class="card border-warning">
                             <div class="card-body">
-                                <h2 class="card-title text-center mb-4"><i class="fas fa-file-upload text-primary"></i> Upload Test Report</h2>
-                                <form onsubmit="uploadReport(event)">
-                                    <div class="form-group">
-                                        <label for="bookingId"><i class="fas fa-list"></i> Select Booking</label>
-                                        <select id="bookingId" class="form-control" required>
-                                            <option value="">Select Booking</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="reportFile"><i class="fas fa-file"></i> Report File</label>
-                                        <input type="file" id="reportFile" class="form-control-file" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-upload"></i> Upload Report</button>
-                                </form>
+                                <h4 class="text-warning"><i class="fas fa-crown"></i> Premium Plan</h4>
+                                <h1 class="my-4">₹499<small class="text-muted">/yr</small></h1>
+                                <ul class="list-unstyled text-left ml-4">
+                                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Priority Booking</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Free Home Sample Collection</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Add up to 5 Family Members</li>
+                                </ul>
+                                <button class="btn btn-warning mt-4 w-100" onclick="showAlert('Thank you for upgrading!', 'success')">Upgrade Now</button>
                             </div>
                         </div>
                     </div>
@@ -77,9 +71,6 @@
             </div>
         </div>
     </div>
-    <footer class="footer">
-        <p>&copy; 2026 MediLab. All rights reserved.</p>
-    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

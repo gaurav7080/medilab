@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="theme-color" content="#2196F3">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>MediLab - Upload Reports</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediLab - Settings</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -17,12 +15,11 @@
             <nav class="navbar navbar-expand-lg shadow-sm d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <button class="sidebar-toggle" id="sidebarToggle">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <span></span><span></span><span></span>
                     </button>
-                    <span class="navbar-brand mb-0 h1"><i class="fas fa-upload text-primary pulse-neon"></i> Upload Report</span>
+                    <span class="navbar-brand mb-0 h1"><i class="fas fa-cog text-light pulse-neon"></i> Settings</span>
                 </div>
+                
                 <!-- Profile Dropdown -->
                 <div class="dropdown profile-dropdown">
                     <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,34 +49,24 @@
                 </div>
             </nav>
             <div class="container-fluid mt-4">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="card-title text-center mb-4"><i class="fas fa-file-upload text-primary"></i> Upload Test Report</h2>
-                                <form onsubmit="uploadReport(event)">
-                                    <div class="form-group">
-                                        <label for="bookingId"><i class="fas fa-list"></i> Select Booking</label>
-                                        <select id="bookingId" class="form-control" required>
-                                            <option value="">Select Booking</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="reportFile"><i class="fas fa-file"></i> Report File</label>
-                                        <input type="file" id="reportFile" class="form-control-file" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-upload"></i> Upload Report</button>
-                                </form>
-                            </div>
+                <h2><i class="fas fa-sliders-h"></i> App Settings</h2>
+                <div class="card col-md-6 mt-4">
+                    <div class="card-body">
+                        <div class="custom-control custom-switch mb-4">
+                            <input type="checkbox" class="custom-control-input" id="emailNotifications" checked>
+                            <label class="custom-control-label" for="emailNotifications">Email Notifications for Bookings</label>
                         </div>
+                        <div class="custom-control custom-switch mb-4">
+                            <input type="checkbox" class="custom-control-input" id="smsNotifications" checked>
+                            <label class="custom-control-label" for="smsNotifications">SMS Notifications</label>
+                        </div>
+                        <hr style="border-color: rgba(255,255,255,0.1);">
+                        <button class="btn btn-danger mt-3"><i class="fas fa-trash-alt"></i> Delete Account</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <footer class="footer">
-        <p>&copy; 2026 MediLab. All rights reserved.</p>
-    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

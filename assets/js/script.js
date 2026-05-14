@@ -1,16 +1,46 @@
 // MediLab Application - Backend API Version
 const API_BASE = 'http://localhost:5000/api';
 
+// ─── Global Loader ─────────────────────────────────────────
+function initGlobalLoader() {
+    if (document.getElementById('globalLoader')) return;
+    const loaderHTML = `
+        <div id="globalLoader" class="global-loader">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">LOADING...</div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', loaderHTML);
+}
+
+function showLoader(text = 'LOADING...') {
+    const loader = document.getElementById('globalLoader');
+    if (loader) {
+        loader.querySelector('.loader-text').innerText = text;
+        loader.classList.add('active');
+    }
+}
+
+function hideLoader() {
+    const loader = document.getElementById('globalLoader');
+    if (loader) loader.classList.remove('active');
+}
+
 // ─── API Helper ──────────────────────────────────────────
 async function apiCall(endpoint, options = {}) {
-    const token = localStorage.getItem('medilab_token');
-    const headers = { ...options.headers };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
-    const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Request failed');
-    return data;
+    showLoader('PROCESSING...');
+    try {
+        const token = localStorage.getItem('medilab_token');
+        const headers = { ...options.headers };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+        const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        return data;
+    } finally {
+        hideLoader();
+    }
 }
 
 // ─── Session Manager ─────────────────────────────────────
@@ -136,7 +166,11 @@ async function login(event) {
 }
 
 // ─── Logout ──────────────────────────────────────────────
-function logout() { SessionManager.clearUser(); window.location.href = 'index.html'; }
+function logout() { 
+    SessionManager.clearUser(); 
+    showLoader('LOGGING OUT...');
+    setTimeout(() => { window.location.href = 'index.html'; }, 800);
+}
 
 // ─── Load Dashboard ──────────────────────────────────────
 async function loadDashboard() {
@@ -191,11 +225,14 @@ async function bookTest(event) {
 
     const testName = document.getElementById('testName').value.trim();
     const labId = document.getElementById('labSelect').value;
+    const patientName = document.getElementById('patientName') ? document.getElementById('patientName').value.trim() : user.name;
+    
     if (!testName || testName.length < 3) { showAlert('Test name must be at least 3 chars!', 'warning'); return; }
     if (!labId) { showAlert('Please select a lab.', 'warning'); return; }
+    if (!patientName) { showAlert('Patient name is required.', 'warning'); return; }
 
     try {
-        await apiCall('/bookings', { method: 'POST', body: JSON.stringify({ labId, testName }) });
+        await apiCall('/bookings', { method: 'POST', body: JSON.stringify({ labId, testName, patientName }) });
         showAlert('✓ Test booked!', 'success');
         setTimeout(() => window.location.href = 'bookings.html', 1500);
     } catch (err) { showAlert(err.message, 'danger'); }
@@ -346,9 +383,11 @@ async function viewBookingsByStatus(status) {
 // ─── Auth Check ──────────────────────────────────────────
 function checkAuth() {
     const user = SessionManager.getUser();
-    const page = window.location.pathname.split('/').pop();
-    const publicPages = ['index.html', 'login.html', 'register.html', ''];
-    if (!user && !publicPages.includes(page)) window.location.href = 'login.html';
+    const page = window.location.pathname.split('/').pop() || 'index.html';
+    const publicPages = ['index.html', 'login.html', 'register.html', 'explore.html', ''];
+    if (!user && !publicPages.includes(page)) {
+        window.location.href = 'login.html';
+    }
 }
 
 // ─── Sidebar ─────────────────────────────────────────────
@@ -366,7 +405,10 @@ function loadSidebar() {
     sidebar.innerHTML = nav;
 }
 
-function goToPage(page) { window.location.href = page; }
+function goToPage(page) { 
+    showLoader('REDIRECTING...');
+    setTimeout(() => { window.location.href = page; }, 600);
+}
 
 // ─── Filter Bookings ─────────────────────────────────────
 function filterBookings() {
@@ -480,11 +522,183 @@ async function deleteTest(testId) {
     } catch (err) { showAlert(err.message, 'danger'); }
 }
 
+// ─── Navbar Profile ──────────────────────────────────────
+function loadNavbarProfile() {
+    const user = SessionManager.getUser();
+    if (!user) return;
+    
+    const navProfileName = document.getElementById('navProfileName');
+    const menuProfileName = document.getElementById('menuProfileName');
+    const menuProfileRole = document.getElementById('menuProfileRole');
+    const navProfilePic = document.getElementById('navProfilePic');
+    
+    if (navProfileName) navProfileName.textContent = user.name;
+    if (menuProfileName) menuProfileName.textContent = user.name;
+    if (menuProfileRole) menuProfileRole.textContent = user.role;
+    if (navProfilePic) navProfilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=00f2fe&color=000`;
+}
+
+// ─── Family Management ─────────────────────────────────────
+async function loadFamilyMembers() {
+    const familyGrid = document.getElementById('familyGrid');
+    if (!familyGrid) return;
+    
+    try {
+        const data = await apiCall('/family');
+        familyGrid.innerHTML = '';
+        
+        if (!data.family || data.family.length === 0) {
+            familyGrid.innerHTML = '<div class="col-12 text-center text-muted"><p>No family members added yet.</p></div>';
+            return;
+        }
+
+        data.family.forEach(member => {
+            const memberCard = document.createElement('div');
+            memberCard.className = 'col-md-4 mb-4';
+            memberCard.innerHTML = `
+                <div class="card border-left-info shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=4facfe&color=fff" class="rounded-circle mb-3 border border-info" width="80" height="80">
+                        <h5>${member.name}</h5>
+                        <p class="text-muted small">${member.relation} • ${member.age} Years • ${member.blood_group || 'N/A'}</p>
+                        <div class="btn-group mt-2">
+                            <a href="book-test.html?patient=${encodeURIComponent(member.name)}" class="btn btn-sm btn-outline-primary"><i class="fas fa-calendar-plus"></i> Book Test</a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFamilyMember('${member.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            familyGrid.appendChild(memberCard);
+        });
+    } catch (err) {
+        console.error(err);
+        showAlert('Failed to load family members', 'danger');
+    }
+}
+
+async function addFamilyMemberSubmit(event) {
+    event.preventDefault();
+    
+    const body = {
+        name: document.getElementById('famName').value,
+        relation: document.getElementById('famRelation').value,
+        age: document.getElementById('famAge').value,
+        gender: document.getElementById('famGender').value,
+        blood_group: document.getElementById('famBloodGroup').value
+    };
+
+    try {
+        await apiCall('/family', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        });
+        
+        $('#addFamilyModal').modal('hide');
+        document.getElementById('addFamilyForm').reset();
+        showAlert('Member added successfully!', 'success');
+        loadFamilyMembers();
+    } catch (err) {
+        showAlert(err.message, 'danger');
+    }
+}
+
+async function deleteFamilyMember(id) {
+    if (!confirm('Are you sure you want to remove this family member?')) return;
+    try {
+        await apiCall(`/family/${id}`, { method: 'DELETE' });
+        showAlert('Family member removed!', 'success');
+        loadFamilyMembers();
+    } catch (err) {
+        showAlert(err.message, 'danger');
+    }
+}
+
+// ─── Profile Management ────────────────────────────────────
+async function loadProfilePageData() {
+    showLoader('LOADING PROFILE...');
+    try {
+        const data = await apiCall('/auth/me');
+        const user = data.user;
+        
+        // Update Session in case anything changed
+        SessionManager.setUser(user);
+        
+        document.getElementById('profileName').value = user.name || '';
+        document.getElementById('profileEmail').value = user.email || '';
+        document.getElementById('profilePhone').value = user.phone || '';
+        if (user.gender) document.getElementById('profileGender').value = user.gender;
+        if (user.blood_group) document.getElementById('profileBloodGroup').value = user.blood_group;
+        if (user.dob) document.getElementById('profileDob').value = user.dob.split('T')[0];
+
+        // Show lab details if Admin
+        if (user.role === 'Admin' && user.labs) {
+            document.getElementById('labDetailsSection').style.display = 'block';
+            document.getElementById('labName').value = user.labs.name || '';
+            document.getElementById('labLocation').value = user.labs.location || '';
+            document.getElementById('labIdNum').value = user.labs.lab_id || '';
+            document.getElementById('labGst').value = user.labs.gst_number || '';
+        }
+    } catch (err) {
+        showAlert('Failed to load profile details.', 'danger');
+    } finally {
+        hideLoader();
+    }
+}
+
+async function updateProfileSubmit(event) {
+    event.preventDefault();
+    const body = {
+        name: document.getElementById('profileName').value,
+        phone: document.getElementById('profilePhone').value,
+        gender: document.getElementById('profileGender').value,
+        blood_group: document.getElementById('profileBloodGroup').value,
+        dob: document.getElementById('profileDob').value
+    };
+
+    try {
+        await apiCall('/auth/profile', {
+            method: 'PUT',
+            body: JSON.stringify(body)
+        });
+        showAlert('Profile updated successfully!', 'success');
+        
+        // Refresh navbar profile
+        loadNavbarProfile(); 
+    } catch (err) {
+        showAlert(err.message || 'Error updating profile', 'danger');
+    }
+}
+
 // ─── Init ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+    initGlobalLoader();
     checkAuth();
     loadSidebar();
+    loadNavbarProfile();
     initializeMobileMenu();
+    
+    if (window.location.pathname.includes('family.html')) {
+        loadFamilyMembers();
+    }
+    
+    if (window.location.pathname.includes('profile.html')) {
+        loadProfilePageData();
+    }
+    
+    // Auto-fill patient name in book-test.html
+    if (window.location.pathname.includes('book-test.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientNameParam = urlParams.get('patient');
+        const patientNameInput = document.getElementById('patientName');
+        if (patientNameInput) {
+            patientNameInput.value = patientNameParam || (SessionManager.getUser() ? SessionManager.getUser().name : '');
+        }
+    }
+    
+    // Smooth page load effect
+    showLoader('INITIALIZING...');
+    setTimeout(hideLoader, 400);
+
     if (document.getElementById('welcome')) loadDashboard();
     if (document.getElementById('bookingsTable')) loadBookings();
     if (document.getElementById('reportsTable')) loadReports();

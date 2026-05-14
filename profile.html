@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediLab - Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="theme-dark">
+    <div class="d-flex">
+        <div class="sidebar"></div>
+        <div class="main flex-fill">
+            <nav class="navbar navbar-expand-lg shadow-sm d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <span class="navbar-brand mb-0 h1"><i class="fas fa-user-edit text-primary pulse-neon"></i> Edit Profile</span>
+                </div>
+                
+                <!-- Profile Dropdown -->
+                <div class="dropdown profile-dropdown">
+                    <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=User&background=00f2fe&color=000" alt="Profile" class="profile-avatar" id="navProfilePic">
+                        <span class="profile-name" id="navProfileName">User</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow-lg profile-menu" aria-labelledby="profileMenuButton">
+                        <div class="dropdown-header d-flex align-items-center">
+                            <div class="header-avatar mr-3">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white" id="menuProfileName">User</h6>
+                                <small class="text-muted" id="menuProfileRole">Patient</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="profile.html"><i class="fas fa-user-edit text-primary"></i> Edit Profile</a>
+                        <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Subscription / Pro</a>
+                        <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
+                        <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> Reports</a>
+                        <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Profile History</a>
+                        <a class="dropdown-item" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="container-fluid mt-4">
+                <h2><i class="fas fa-user"></i> Your Profile</h2>
+                <p class="text-muted">Update your personal details here.</p>
+                <div class="card col-md-6 mt-4">
+                    <div class="card-body">
+                        <form id="profileForm" onsubmit="updateProfileSubmit(event)">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-control" id="profileName" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" id="profileEmail" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control" id="profilePhone" placeholder="1234567890">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" class="form-control" id="profileDob">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Gender</label>
+                                    <select class="form-control" id="profileGender">
+                                        <option value="">Select Gender</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Blood Group</label>
+                                    <select class="form-control" id="profileBloodGroup">
+                                        <option value="">Unknown / Select</option>
+                                        <option>A+</option><option>A-</option>
+                                        <option>B+</option><option>B-</option>
+                                        <option>O+</option><option>O-</option>
+                                        <option>AB+</option><option>AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Admin Lab Details (Hidden by default) -->
+                            <div id="labDetailsSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <h5><i class="fas fa-hospital"></i> Lab Information</h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6 form-group">
+                                        <label>Lab Name</label>
+                                        <input type="text" class="form-control" id="labName" disabled>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Lab Location</label>
+                                        <input type="text" class="form-control" id="labLocation" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label>Lab Registration ID</label>
+                                        <input type="text" class="form-control" id="labIdNum" disabled>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Lab GST</label>
+                                        <input type="text" class="form-control" id="labGst" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-3 w-100"><i class="fas fa-save"></i> Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
