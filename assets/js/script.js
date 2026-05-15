@@ -103,7 +103,9 @@ function initializeMobileMenu() {
         document.body.appendChild(overlay);
     }
     const overlay = document.querySelector('.mobile-overlay');
+    const closeButton = sidebar.querySelector('.sidebar-close');
     toggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('active'); toggle.classList.toggle('active'); overlay.classList.toggle('active'); });
+    if (closeButton) closeButton.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); });
     overlay.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); });
     sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); }));
     sidebar.addEventListener('click', (e) => e.stopPropagation());
@@ -396,7 +398,22 @@ function loadSidebar() {
     if (!user) return;
     const sidebar = document.querySelector('.sidebar');
     if (!sidebar) return;
-    let nav = `<h2><i class="fas fa-flask"></i> MediLab</h2>
+    const profileHtml = `
+        <div class="sidebar-profile">
+            <div class="sidebar-profile-inner">
+                <div>
+                    <div class="sidebar-profile-name">${user.name}</div>
+                    <div class="sidebar-profile-role">${user.role}</div>
+                </div>
+                <button type="button" class="sidebar-close" aria-label="Close menu">&times;</button>
+            </div>
+            <div class="sidebar-profile-meta">
+                <span class="sidebar-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+                <a href="profile.html" class="sidebar-profile-link"><i class="fas fa-user-circle"></i> View Profile</a>
+            </div>
+        </div>
+    `;
+    let nav = `${profileHtml}<div class="sidebar-head"><h2><i class="fas fa-flask"></i> MediLab</h2></div>
         <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>`;
     if (user.role === 'Patient') nav += '<a href="book-test.html"><i class="fas fa-plus-circle"></i> Book Test</a>';
     nav += '<a href="bookings.html"><i class="fas fa-list"></i> Bookings</a><a href="reports.html"><i class="fas fa-file-medical"></i> Reports</a>';
