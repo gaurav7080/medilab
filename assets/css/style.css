@@ -1389,82 +1389,84 @@ option {
 
 /* Global Footer */
 .footer {
-    margin-top: 60px;
-    padding: 40px 0 20px;
-    border-top: 1px solid var(--border-glass);
-    background: rgba(8, 11, 18, 0.5);
+    border-top: 1px solid var(--border-glass); 
+    padding: 60px 0 30px;
+    background: rgba(0,0,0,0.2);
+    margin-top: 50px;
+    width: 100%;
 }
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
+.footer-grid { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr 1fr 1fr; 
+    gap: 40px; 
+    margin-bottom: 40px; 
 }
-.footer-top {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
-    margin-bottom: 30px;
-}
-.footer-brand h4 {
-    color: var(--primary-color);
-    margin-bottom: 12px;
-}
-.footer-brand p {
-    max-width: 300px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-.footer-links {
-    display: flex;
-    gap: 60px;
-}
-.footer-col h6 {
-    color: var(--text-main);
-    margin-bottom: 15px;
-    font-weight: 600;
+.footer-col h5 {
+    font-family: 'Rajdhani', sans-serif; 
+    font-weight: 700; 
     text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-}
-.footer-col ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.footer-col ul li {
-    margin-bottom: 8px;
-}
-.footer-col ul li a {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-.footer-col ul li a:hover {
+    letter-spacing: 1px; 
+    margin-bottom: 16px; 
+    font-size: 1.1rem;
     color: var(--primary-color);
 }
-.footer-bottom {
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    font-size: 0.8rem;
+.footer-col p { 
+    color: var(--text-muted); 
+    font-size: 0.9rem; 
+    line-height: 1.7; 
+}
+.footer-col a {
+    display: block; 
+    color: var(--text-muted); 
+    text-decoration: none;
+    padding: 4px 0; 
+    font-size: 0.9rem; 
+    transition: all 0.3s ease;
+}
+.footer-col a:hover { 
+    color: var(--primary-color); 
+    padding-left: 6px; 
+}
+.social-links { 
+    display: flex; 
+    gap: 12px; 
+}
+.social-links a {
+    width: 40px; 
+    height: 40px; 
+    border-radius: 10px; 
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    background: rgba(0,242,254,0.06); 
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted); 
+    font-size: 1rem; 
+    padding: 0 !important;
+}
+.social-links a:hover {
+    color: var(--primary-color); 
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px rgba(0,242,254,0.2); 
+    transform: translateY(-3px);
+}
+.footer-bottom { 
+    text-align: center; 
+    padding-top: 30px; 
+    border-top: 1px solid var(--border-glass); 
+}
+.footer-bottom p { 
+    color: var(--text-muted); 
+    font-size: 0.85rem; 
+    margin: 0; 
 }
 
-@media (max-width: 768px) {
-    .footer-top {
-        flex-direction: column;
-        gap: 30px;
-        text-align: center;
-    }
-    .footer-brand p {
-        margin: 0 auto;
-    }
-    .footer-links {
-        justify-content: center;
-        gap: 30px;
-    }
+@media (max-width: 991px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 576px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer { padding: 40px 0 20px; }
 }/* Modern Toast System */
 #toastContainer {
     position: fixed;
@@ -1548,3 +1550,196 @@ option {
     border-color: var(--primary-color);
     box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
 }
+
+/* Subscription Section & Pricing Cards */
+.subscription-header {
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+.pricing-card {
+    background: var(--bg-panel);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-align: center;
+    position: relative;
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+.pricing-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 15px 45px rgba(0, 242, 254, 0.15);
+}
+.pricing-card.popular {
+    border: 2px solid var(--primary-color);
+    transform: scale(1.05);
+}
+.pricing-card.popular:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+.popular-badge {
+    position: absolute;
+    top: 15px;
+    right: -30px;
+    background: var(--primary-color);
+    color: #000;
+    padding: 5px 35px;
+    transform: rotate(45deg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.plan-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: rgba(0, 242, 254, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+}
+.plan-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.plan-price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+.plan-price small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px;
+    text-align: left;
+}
+.plan-features li {
+    padding: 10px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.plan-features li:last-child {
+    border-bottom: none;
+}
+.plan-features li i {
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+.btn-plan {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .pricing-card.popular {
+        transform: scale(1);
+    }
+    .pricing-card.popular:hover {
+        transform: translateY(-10px) scale(1);
+    }
+}
+
+/* Featured Labs & Price Comparison */
+.featured-lab-card {
+    background: rgba(0, 242, 254, 0.05);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+.featured-lab-card:hover {
+    background: rgba(0, 242, 254, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 242, 254, 0.15);
+}
+.featured-lab-card i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+.featured-lab-card span {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.featured-lab-card .badge {
+    font-size: 0.6rem;
+    background: var(--primary-color);
+    color: #000;
+    padding: 3px 8px;
+}
+
+.price-comparison-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 15px;
+    animation: slideDownIn 0.4s ease;
+}
+.comparison-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.comparison-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+.comparison-item.cheapest {
+    border-color: var(--success-color);
+    background: rgba(46, 213, 115, 0.1);
+}
+.comparison-item .lab-name { font-weight: 600; font-size: 0.85rem; }
+.comparison-item .lab-price { color: var(--primary-color); font-weight: 700; }
+
+@keyframes slideDownIn {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+

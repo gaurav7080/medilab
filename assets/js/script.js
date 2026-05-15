@@ -905,9 +905,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (window.location.pathname.includes('profile.html')) {
         loadProfilePageData();
+        loadSubscriptionPlans();
     }
     
-    // Auto-fill patient name in book-test.html
     if (window.location.pathname.includes('book-test.html')) {
         const urlParams = new URLSearchParams(window.location.search);
         const patientNameParam = urlParams.get('patient');
@@ -915,6 +915,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (patientNameInput) {
             patientNameInput.value = patientNameParam || (SessionManager.getUser() ? SessionManager.getUser().name : '');
         }
+        loadFeaturedLabs();
     }
     
     // Smooth page load effect
@@ -938,46 +939,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ─── Global Footer ─────────────────────────────────────────
 function renderGlobalFooter() {
-    const mainContent = document.querySelector('.main');
-    if (!mainContent) return;
-    
-    // Remove existing static footers
-    document.querySelectorAll('.footer').forEach(f => f.remove());
+    // Skip if we are on the landing page (it has its own specific footer structure)
+    const path = window.location.pathname;
+    if (path.endsWith('index.html') || path.endsWith('/')) return;
 
-    const footer = document.createElement('footer');
-    footer.className = 'footer';
-    footer.innerHTML = `
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <h4><i class="fas fa-flask"></i> MediLab</h4>
-                    <p>Next-generation pathology platform for seamless diagnostics and instant digital reports across India.</p>
-                </div>
-                <div class="footer-links">
+    let target = document.querySelector('.main');
+    if (!target) target = document.body;
+    
+    // Remove any existing static footers to avoid duplication
+    document.querySelectorAll('.footer, .explore-footer').forEach(f => f.remove());
+
+    const footerHTML = `
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
                     <div class="footer-col">
-                        <h6>Navigation</h6>
-                        <ul>
-                            <li><a href="dashboard.html">Dashboard</a></li>
-                            <li><a href="bookings.html">Bookings</a></li>
-                            <li><a href="profile.html">My Profile</a></li>
-                        </ul>
+                        <h5><i class="fas fa-flask"></i> MediLab</h5>
+                        <p>India's smart pathology platform. Connecting patients with certified diagnostic labs for a seamless health experience.</p>
                     </div>
                     <div class="footer-col">
-                        <h6>Support</h6>
-                        <ul>
-                            <li><a href="settings.html">Settings</a></li>
-                            <li><a href="reports.html">Reports</a></li>
-                            <li><a href="subscription.html">Pro Status</a></li>
-                        </ul>
+                        <h5>Quick Links</h5>
+                        <a href="index.html#about">About Us</a>
+                        <a href="index.html#services">Services</a>
+                        <a href="index.html#how-it-works">How It Works</a>
+                        <a href="index.html#contact">Contact</a>
+                    </div>
+                    <div class="footer-col">
+                        <h5>For Users</h5>
+                        <a href="login.html">Sign In</a>
+                        <a href="register.html">Create Account</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Follow Us</h5>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                        </div>
                     </div>
                 </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 MediLab. All rights reserved. Built with <i class="fas fa-heart text-danger"></i> in India.</p>
+                </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 MediLab — Smart Pathology Intelligence. Built for precision care.</p>
-            </div>
-        </div>
+        </footer>
     `;
-    mainContent.appendChild(footer);
+    
+    target.insertAdjacentHTML('beforeend', footerHTML);
 }
 
 // ─── Manage Tests (Catalog) ────────────────────────────────
@@ -1067,3 +1078,212 @@ function updateTestStats(tests) {
         fast.textContent = fastCount;
     }
 }
+
+// ─── Subscription Plans (Role-Based) ────────────────────────
+function loadSubscriptionPlans() {
+    const container = document.getElementById('subscriptionPlansContainer');
+    if (!container) return;
+
+    const user = SessionManager.getUser();
+    if (!user) return;
+
+    const isPatient = user.role === 'Patient';
+    
+    const plans = isPatient ? [
+        {
+            name: "Basic",
+            price: "Free",
+            icon: "fas fa-leaf",
+            features: [
+                "Online test booking",
+                "Digital report access",
+                "1 month data history",
+                "Standard support"
+            ],
+            btnText: "Current Plan",
+            btnClass: "btn-outline-primary",
+            popular: false
+        },
+        {
+            name: "Plus",
+            price: "₹199",
+            period: "/mo",
+            icon: "fas fa-shield-alt",
+            features: [
+                "Instant Price Comparison",
+                "Priority booking slots",
+                "Express 12h Reports",
+                "Family Dashboard (3 members)",
+                "1 year report storage"
+            ],
+            btnText: "Upgrade to Plus",
+            btnClass: "btn-primary",
+            popular: true
+        },
+        {
+            name: "Pro",
+            price: "₹499",
+            period: "/mo",
+            icon: "fas fa-crown",
+            features: [
+                "Smart AI Lab Recommendations",
+                "Real-time Health Trends (Charts)",
+                "24/7 AI Health Assistant",
+                "Home Collection (15% Off)",
+                "Unlimited Lifetime Storage"
+            ],
+            btnText: "Go Pro",
+            btnClass: "btn-primary",
+            popular: false
+        }
+    ] : [
+        {
+            name: "Standard",
+            price: "Free",
+            icon: "fas fa-hospital",
+            features: [
+                "Standard dashboard",
+                "Up to 50 bookings/month",
+                "1 staff account",
+                "Basic analytics"
+            ],
+            btnText: "Current Plan",
+            btnClass: "btn-outline-primary",
+            popular: false
+        },
+        {
+            name: "Plus",
+            price: "₹999",
+            period: "/mo",
+            icon: "fas fa-rocket",
+            features: [
+                "Priority Lab Listing (Top Search)",
+                "Premium 'Verified' Badge",
+                "Unlimited bookings",
+                "5 staff accounts",
+                "Advanced patient analytics"
+            ],
+            btnText: "Upgrade to Plus",
+            btnClass: "btn-primary",
+            popular: true
+        },
+        {
+            name: "Enterprise",
+            price: "₹2499",
+            period: "/mo",
+            icon: "fas fa-vial",
+            features: [
+                "'MediLab Recommended' Status",
+                "Featured Lab on Home Page",
+                "API access for LIMS",
+                "Multiple branch support",
+                "White-label reports"
+            ],
+            btnText: "Get Enterprise",
+            btnClass: "btn-primary",
+            popular: false
+        }
+    ];
+
+    container.innerHTML = plans.map(plan => `
+        <div class="pricing-card ${plan.popular ? 'popular' : ''}">
+            ${plan.popular ? '<div class="popular-badge">Best Value</div>' : ''}
+            <div class="plan-icon">
+                <i class="${plan.icon}"></i>
+            </div>
+            <h4 class="plan-name">${plan.name}</h4>
+            <div class="plan-price">${plan.price}${plan.period || ''}</div>
+            <ul class="plan-features">
+                ${plan.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+            </ul>
+            <button class="btn btn-plan ${plan.btnClass}">${plan.btnText}</button>
+        </div>
+    `).join('');
+}
+
+// ─── Featured Labs & Recommendations ───────────────────────
+async function loadFeaturedLabs() {
+    const list = document.getElementById('featuredLabsList');
+    if (!list) return;
+
+    try {
+        const data = await apiCall('/labs');
+        const labs = data.labs || [];
+        
+        // Filter "Featured" labs (Simulating premium status)
+        const featured = labs.slice(0, 3); // Take first 3 as featured for demo
+        
+        list.innerHTML = featured.map(lab => `
+            <div class="col-4">
+                <div class="featured-lab-card" onclick="selectRecommendedLab('${lab.id}', '${lab.name}')">
+                    <i class="fas fa-hospital"></i>
+                    <span>${lab.name}</span>
+                    <div class="badge mt-2">Recommended</div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) { console.error('Featured labs error:', err); }
+}
+
+function selectRecommendedLab(id, name) {
+    const select = document.getElementById('labSelect');
+    if (!select) return;
+    
+    select.value = id;
+    toast(`✓ Selected ${name}`, 'success');
+}
+
+// ─── Price Comparison Logic ───────────────────────────────
+let comparisonTimeout;
+async function comparePrices() {
+    const query = document.getElementById('testName').value.trim();
+    const tool = document.getElementById('priceComparisonTool');
+    const container = document.getElementById('comparisonResults');
+    
+    if (!query || query.length < 3) {
+        if (tool) tool.style.display = 'none';
+        return;
+    }
+
+    clearTimeout(comparisonTimeout);
+    comparisonTimeout = setTimeout(async () => {
+        try {
+            // In a real app, we would search across all labs. 
+            // For now, we simulate by fetching all labs and showing sample prices.
+            const data = await apiCall('/labs');
+            const labs = data.labs || [];
+            
+            if (labs.length === 0) return;
+            
+            if (tool) tool.style.display = 'block';
+            
+            // Generate some dynamic mock prices based on test name length and lab name
+            const results = labs.map(lab => {
+                const basePrice = 500 + (query.length * 20);
+                const variance = (lab.name.length % 5) * 50;
+                return {
+                    name: lab.name,
+                    price: basePrice + variance,
+                    id: lab.id
+                };
+            }).sort((a, b) => a.price - b.price);
+
+            const minPrice = results.length > 0 ? results[0].price : 0;
+
+            if (container) {
+                container.innerHTML = results.slice(0, 4).map(res => `
+                    <div class="comparison-item ${res.price === minPrice ? 'cheapest' : ''}" onclick="selectRecommendedLab('${res.id}', '${res.name}')" style="cursor:pointer">
+                        <div class="lab-name">
+                            ${res.name}
+                            ${res.price === minPrice ? '<span class="badge badge-success ml-2">Best Price</span>' : ''}
+                        </div>
+                        <div class="lab-price">₹${res.price}</div>
+                    </div>
+                `).join('');
+            }
+
+        } catch (err) { console.error('Comparison error:', err); }
+    }, 500);
+}
+
+
