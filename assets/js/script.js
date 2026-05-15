@@ -532,7 +532,6 @@ function loadSidebar() {
 
     if (user.role === 'Patient') {
         navItems += `
-            <a href="subscription.html" class="${window.location.pathname.includes('subscription') ? 'active' : ''}"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
             <a href="book-test.html" class="${window.location.pathname.includes('book-test') ? 'active' : ''}"><i class="fas fa-plus-circle"></i> Book New Test</a>
             <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-calendar-alt"></i> My Bookings</a>
             <a href="reports.html" class="${window.location.pathname.includes('reports') ? 'active' : ''}"><i class="fas fa-file-medical-alt"></i> Medical Reports</a>
@@ -540,7 +539,6 @@ function loadSidebar() {
         `;
     } else if (user.role === 'Admin') {
         navItems += `
-            <a href="subscription.html" class="${window.location.pathname.includes('subscription') ? 'active' : ''}"><i class="fas fa-crown text-warning"></i> Upgrade Plan</a>
             <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-clipboard-list"></i> Manage Orders</a>
             <a href="upload-reports.html" class="${window.location.pathname.includes('upload-reports') ? 'active' : ''}"><i class="fas fa-upload"></i> Upload Results</a>
             <a href="manage-tests.html" class="${window.location.pathname.includes('manage-tests') ? 'active' : ''}"><i class="fas fa-flask"></i> Test Catalog</a>
