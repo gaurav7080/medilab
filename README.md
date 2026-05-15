@@ -42,7 +42,7 @@ Open a terminal in the repository root and run one of these commands:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/index.html` in your browser.
+Then open `https://medilab-jw45.onrender.com/index.html` in your browser.
 
 ## Contents
 

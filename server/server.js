@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
 // ─── Start Server ────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`\n🚀 MediLab Server running on http://localhost:${PORT}`);
+    console.log(`\n🚀 MediLab Server running on https://medilab-jw45.onrender.com`);
     console.log(`📁 Frontend served from: ${path.join(__dirname, '..')}`);
     console.log(`🗄️  Database: Supabase (PostgreSQL)\n`);
 });
