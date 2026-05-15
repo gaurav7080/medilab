@@ -532,6 +532,7 @@ function loadSidebar() {
 
     if (user.role === 'Patient') {
         navItems += `
+            <a href="subscription.html" class="${window.location.pathname.includes('subscription') ? 'active' : ''}"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
             <a href="book-test.html" class="${window.location.pathname.includes('book-test') ? 'active' : ''}"><i class="fas fa-plus-circle"></i> Book New Test</a>
             <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-calendar-alt"></i> My Bookings</a>
             <a href="reports.html" class="${window.location.pathname.includes('reports') ? 'active' : ''}"><i class="fas fa-file-medical-alt"></i> Medical Reports</a>
@@ -539,6 +540,7 @@ function loadSidebar() {
         `;
     } else if (user.role === 'Admin') {
         navItems += `
+            <a href="subscription.html" class="${window.location.pathname.includes('subscription') ? 'active' : ''}"><i class="fas fa-crown text-warning"></i> Upgrade Plan</a>
             <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-clipboard-list"></i> Manage Orders</a>
             <a href="upload-reports.html" class="${window.location.pathname.includes('upload-reports') ? 'active' : ''}"><i class="fas fa-upload"></i> Upload Results</a>
             <a href="manage-tests.html" class="${window.location.pathname.includes('manage-tests') ? 'active' : ''}"><i class="fas fa-flask"></i> Test Catalog</a>
@@ -704,13 +706,14 @@ function loadNavbarProfile() {
 
         if (user.role === 'Patient') {
             menuItems += `
-                <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
+                <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade / Subscription</a>
                 <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Manage Family</a>
                 <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> My Reports</a>
                 <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Test History</a>
             `;
         } else if (user.role === 'Admin') {
             menuItems += `
+                <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade / Subscription</a>
                 <a class="dropdown-item" href="bookings.html"><i class="fas fa-tasks text-success"></i> Manage Orders</a>
                 <a class="dropdown-item" href="manage-tests.html"><i class="fas fa-flask text-info"></i> Test Catalog</a>
                 <a class="dropdown-item" href="upload-reports.html"><i class="fas fa-upload text-warning"></i> Upload Results</a>
@@ -903,8 +906,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loadFamilyMembers();
     }
     
-    if (window.location.pathname.includes('profile.html')) {
-        loadProfilePageData();
+    if (window.location.pathname.includes('profile.html') || window.location.pathname.includes('subscription.html')) {
+        if (window.location.pathname.includes('profile.html')) loadProfilePageData();
         loadSubscriptionPlans();
     }
     
