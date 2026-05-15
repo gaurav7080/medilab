@@ -1,5 +1,5 @@
 // MediLab Application - Backend API Version
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://medilab-jw45.onrender.com/api';
 
 // ─── Global Loader ─────────────────────────────────────────
 function initGlobalLoader() {
