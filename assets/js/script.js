@@ -13,6 +13,111 @@ function initGlobalLoader() {
     document.body.insertAdjacentHTML('beforeend', loaderHTML);
 }
 
+// --- Mobile Bottom Nav & Bot Injector ---
+function initFuturisticUI() {
+    const user = SessionManager.getUser();
+    if (!user) return;
+
+    // Inject Background Orbs
+    if (!document.querySelector('.orb-1')) {
+        document.body.insertAdjacentHTML('afterbegin', '<div class="bg-orb orb-1"></div><div class="bg-orb orb-2"></div>');
+    }
+
+    // Inject Mobile Bottom Nav
+    if (!document.querySelector('.mobile-bottom-nav')) {
+        const path = window.location.pathname;
+        const bottomNavHTML = `
+            <div class="mobile-bottom-nav">
+                <a href="dashboard.html" class="${path.includes('dashboard') ? 'active' : ''}">
+                    <i class="fas fa-home"></i><span>Home</span>
+                </a>
+                <a href="bookings.html" class="${path.includes('bookings') ? 'active' : ''}">
+                    <i class="fas fa-calendar-alt"></i><span>Bookings</span>
+                </a>
+                <a href="reports.html" class="${path.includes('reports') ? 'active' : ''}">
+                    <i class="fas fa-file-medical-alt"></i><span>Reports</span>
+                </a>
+                <a href="profile.html" class="${path.includes('profile') ? 'active' : ''}">
+                    <i class="fas fa-user"></i><span>Profile</span>
+                </a>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', bottomNavHTML);
+    }
+
+    // Inject MediBot FAB
+    if (!document.querySelector('.medibot-fab')) {
+        const botHTML = `
+            <div class="medibot-fab" onclick="toggleMediBot()">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div id="medibotChat" class="card medibot-chat-panel" style="display:none; position:fixed; bottom:160px; right:25px; width:300px; z-index:1061; border-radius: 20px;">
+                <div class="card-header bg-primary text-black d-flex justify-content-between align-items-center" style="border-radius: 20px 20px 0 0;">
+                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-robot"></i> MediBot AI</h6>
+                    <button type="button" class="close text-black" onclick="toggleMediBot()">&times;</button>
+                </div>
+                <div class="card-body" style="max-height: 350px; overflow-y: auto; background: rgba(8,11,18,0.95);">
+                    <div class="bot-msg mb-2">
+                        <small class="text-primary font-weight-bold">MediBot:</small>
+                        <p class="mb-0 text-white small">Hello! I'm your AI health assistant. How can I help you today?</p>
+                    </div>
+                    <div class="user-options d-flex flex-wrap gap-2 mt-3">
+                        <button class="btn btn-xs btn-outline-primary mb-2 mr-1" style="font-size: 0.7rem; padding: 4px 8px;" onclick="botTalk('How to stay healthy?')">Healthy Tips</button>
+                        <button class="btn btn-xs btn-outline-primary mb-2 mr-1" style="font-size: 0.7rem; padding: 4px 8px;" onclick="botTalk('Where is my report?')">Report Status</button>
+                        <button class="btn btn-xs btn-outline-primary mb-2 mr-1" style="font-size: 0.7rem; padding: 4px 8px;" onclick="botTalk('Book a test')">Book Test</button>
+                    </div>
+                    <div id="botResponse" class="mt-3 small text-info" style="min-height: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"></div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', botHTML);
+    }
+}
+
+function toggleMediBot() {
+    const chat = document.getElementById('medibotChat');
+    if (chat) {
+        $(chat).fadeToggle();
+    }
+}
+
+function botTalk(query) {
+    const resp = document.getElementById('botResponse');
+    resp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+    
+    setTimeout(() => {
+        let answer = "I'm processing your request. Please check our dedicated sections for more details.";
+        if (query.includes('healthy')) answer = "Stay hydrated, exercise 30 mins daily, and get regular checkups at MediLab! 🍏";
+        if (query.includes('report')) answer = "You can view and download your reports from the 'Medical Reports' section once they are ready.";
+        if (query.includes('Book')) answer = "Click on 'Book New Test' to schedule your next health checkup instantly!";
+        
+        resp.innerHTML = `<i class="fas fa-comment-dots"></i> ${answer}`;
+    }, 1000);
+}
+
+function initHealthMetrics() {
+    const container = document.getElementById('healthMetricsContainer');
+    if (!container) return;
+
+    const metrics = [
+        { label: 'Blood Sugar', value: '98', unit: 'mg/dL', progress: 75, color: '#00f2fe' },
+        { label: 'Heart Rate', value: '72', unit: 'BPM', progress: 65, color: '#ff3366' },
+        { label: 'BMI Index', value: '22.4', unit: '', progress: 45, color: '#00c6ff' }
+    ];
+
+    container.innerHTML = metrics.map(m => `
+        <div class="col-md-4 mb-4">
+            <div class="metric-card card-holographic">
+                <div class="metric-label">${m.label}</div>
+                <div class="metric-value">${m.value}<small style="font-size: 1rem; margin-left: 5px;">${m.unit}</small></div>
+                <div class="progress-cyber">
+                    <div class="progress-cyber-bar" style="width: ${m.progress}%; background: ${m.color}; box-shadow: 0 0 10px ${m.color}cc;"></div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
 function showLoader(text = 'LOADING...') {
     const loader = document.getElementById('globalLoader');
     if (loader) {
@@ -200,6 +305,9 @@ async function loadDashboard() {
             const ab = document.getElementById('approvedBookings'); if (ab) ab.innerText = s.approvedBookings;
             const cb = document.getElementById('completedBookings'); if (cb) cb.innerText = s.completedBookings;
         }
+        
+        // --- Init Futuristic Components ---
+        initHealthMetrics();
     } catch (err) { console.error('Dashboard error:', err); }
 }
 
@@ -713,6 +821,7 @@ async function loadProfilePageData() {
             if (document.getElementById('profileName')) document.getElementById('profileName').value = user.name || '';
             if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = user.email || '';
             if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = user.phone || '';
+            if (document.getElementById('profileAge')) document.getElementById('profileAge').value = user.age || '';
             if (user.gender && document.getElementById('profileGender')) document.getElementById('profileGender').value = user.gender;
             if (user.blood_group && document.getElementById('profileBloodGroup')) document.getElementById('profileBloodGroup').value = user.blood_group;
             if (user.dob && document.getElementById('profileDob')) document.getElementById('profileDob').value = user.dob.split('T')[0];
@@ -731,33 +840,6 @@ async function loadProfilePageData() {
             }
         }
 
-        // Update Quick Links based on role
-        const quickLinks = document.querySelector('.quick-links');
-        if (quickLinks) {
-            let linksHtml = '<h5 class="mb-3">Quick access</h5>';
-            if (user.role === 'Patient') {
-                linksHtml += `
-                    <a class="profile-link" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
-                    <a class="profile-link" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
-                    <a class="profile-link" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> My Reports</a>
-                    <a class="profile-link" href="history.html"><i class="fas fa-history text-secondary"></i> Test History</a>
-                `;
-            } else if (user.role === 'Admin') {
-                linksHtml += `
-                    <a class="profile-link" href="bookings.html"><i class="fas fa-tasks text-success"></i> Manage Orders</a>
-                    <a class="profile-link" href="manage-tests.html"><i class="fas fa-flask text-info"></i> Test Catalog</a>
-                    <a class="profile-link" href="upload-reports.html"><i class="fas fa-upload text-warning"></i> Upload Results</a>
-                `;
-            }
-            linksHtml += '<a class="profile-link" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>';
-            quickLinks.innerHTML = linksHtml;
-        }
-
-        // Update Account Type in summary
-        const accType = document.getElementById('profileAccountType');
-        if (accType) accType.textContent = user.role === 'Admin' ? 'Lab Administrator' : 'Patient';
-        const accEmail = document.getElementById('profileAccountEmail');
-        if (accEmail) accEmail.textContent = user.email;
 
     } catch (err) {
         console.error(err);
@@ -778,6 +860,7 @@ async function updateProfileSubmit(event) {
         body = {
             name: document.getElementById('profileName').value,
             phone: document.getElementById('profilePhone').value,
+            age: document.getElementById('profileAge').value,
             gender: document.getElementById('profileGender').value,
             blood_group: document.getElementById('profileBloodGroup').value,
             dob: document.getElementById('profileDob').value
@@ -835,17 +918,152 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Smooth page load effect
-    showLoader('INITIALIZING...');
-    setTimeout(hideLoader, 400);
+    const loader = document.getElementById('globalLoader');
+    if (loader) {
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 300);
+        }, 150); // Reduced delay for better feel
+    }
 
     if (document.getElementById('welcome')) loadDashboard();
     if (document.getElementById('bookingsTable')) loadBookings();
     if (document.getElementById('reportsTable')) loadReports();
     if (document.getElementById('bookingId')) loadUploadReports();
     if (document.getElementById('labSelect')) loadLabOptions('labSelect');
-
-    const searchInput = document.getElementById('searchBookings');
-    const statusFilter = document.getElementById('statusFilter');
-    if (searchInput) searchInput.addEventListener('input', filterBookings);
-    if (statusFilter) statusFilter.addEventListener('change', filterBookings);
+    
+    // Inject Global Footer
+    renderGlobalFooter();
 });
+
+// ─── Global Footer ─────────────────────────────────────────
+function renderGlobalFooter() {
+    const mainContent = document.querySelector('.main');
+    if (!mainContent) return;
+    
+    // Remove existing static footers
+    document.querySelectorAll('.footer').forEach(f => f.remove());
+
+    const footer = document.createElement('footer');
+    footer.className = 'footer';
+    footer.innerHTML = `
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <h4><i class="fas fa-flask"></i> MediLab</h4>
+                    <p>Next-generation pathology platform for seamless diagnostics and instant digital reports across India.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h6>Navigation</h6>
+                        <ul>
+                            <li><a href="dashboard.html">Dashboard</a></li>
+                            <li><a href="bookings.html">Bookings</a></li>
+                            <li><a href="profile.html">My Profile</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h6>Support</h6>
+                        <ul>
+                            <li><a href="settings.html">Settings</a></li>
+                            <li><a href="reports.html">Reports</a></li>
+                            <li><a href="subscription.html">Pro Status</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 MediLab — Smart Pathology Intelligence. Built for precision care.</p>
+            </div>
+        </div>
+    `;
+    mainContent.appendChild(footer);
+}
+
+// ─── Manage Tests (Catalog) ────────────────────────────────
+async function loadManageTestsPage() {
+    const user = SessionManager.getUser();
+    if (!user || user.role !== 'Admin') return;
+    
+    const testsGrid = document.getElementById('testsGrid');
+    const emptyState = document.getElementById('emptyState');
+    if (!testsGrid) return;
+
+    // Show Skeletons
+    testsGrid.innerHTML = Array(3).fill(0).map(() => `
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card skeleton-card skeleton"></div>
+        </div>
+    `).join('');
+    
+    try {
+        const data = await apiCall('/tests/my-lab'); 
+        const labTests = data.tests || [];
+        
+        testsGrid.innerHTML = '';
+
+        if (labTests.length === 0) {
+            if (emptyState) emptyState.style.display = 'block';
+            return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+        const statsSec = document.getElementById('statsSection');
+        if (statsSec) statsSec.style.display = 'flex';
+
+        labTests.forEach(test => {
+            const tName = test.testName || test.test_name || 'Unnamed Test';
+            const tPrice = test.price || 0;
+            const tCategory = test.category || 'General';
+            const tTime = test.turnaroundTime || test.turnaround_time || '24 hrs';
+            const tDesc = test.description || 'Professional diagnostic service provided by our certified laboratory.';
+
+            const card = document.createElement('div');
+            card.className = 'col-md-6 col-lg-4 mb-4';
+            card.innerHTML = `
+                <div class="card h-100 test-card">
+                    <div class="card-header bg-transparent border-0 d-flex justify-content-between">
+                        <span class="badge badge-info">${tCategory}</span>
+                        <span class="text-primary font-weight-bold">₹${tPrice}</span>
+                    </div>
+                    <div class="card-body pt-0">
+                        <h5 class="card-title text-white mb-2">${tName}</h5>
+                        <p class="card-text text-muted small">${tDesc.substring(0, 80)}${tDesc.length > 80 ? '...' : ''}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted"><i class="fas fa-clock"></i> ${tTime}</small>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="showTestForm('${test.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-outline-danger" onclick="deleteTest('${test.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            testsGrid.appendChild(card);
+        });
+        
+        updateTestStats(labTests);
+
+    } catch (err) {
+        console.error('Catalog error:', err);
+        showAlert('Failed to load test catalog.', 'danger');
+    } finally {
+        hideLoader();
+    }
+}
+
+function updateTestStats(tests) {
+    const total = document.getElementById('totalTestsCount');
+    const avg = document.getElementById('avgPriceCount');
+    const fast = document.getElementById('fastTestsCount');
+    if (!total || !avg) return;
+    
+    total.textContent = tests.length;
+    const avgP = tests.length > 0 ? Math.round(tests.reduce((sum, t) => sum + (t.price || 0), 0) / tests.length) : 0;
+    avg.textContent = `₹${avgP}`;
+    
+    if (fast) {
+        const fastCount = tests.filter(t => (t.turnaroundTime || t.turnaround_time || '').toLowerCase().includes('24')).length;
+        fast.textContent = fastCount;
+    }
+}

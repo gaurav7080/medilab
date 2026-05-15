@@ -52,17 +52,19 @@
                 <h2><i class="fas fa-user"></i> Your Profile</h2>
                 <p class="text-muted">Update your personal details here.</p>
                 <div class="row profile-row mt-4">
-                    <div class="col-12 col-lg-8">
+                    <div class="col-12">
                         <div class="card profile-card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
                                     <div>
-                                        <h4 class="card-title mb-1">Personal Details</h4>
-                                        <p class="text-muted mb-0">Edit your profile information with clean, responsive layout.</p>
+                                        <h4 class="card-title mb-1">Account Settings</h4>
+                                        <p class="text-muted mb-0">Update your personal and professional profile details below.</p>
                                     </div>
-                                    <span class="badge badge-pill badge-info px-3 py-2 mt-3 mt-lg-0">Verified</span>
+                                    <div class="text-right">
+                                        <span class="badge badge-pill badge-info px-3 py-2">Active Account</span>
+                                    </div>
                                 </div>
-
+                                
                                 <form id="profileForm" onsubmit="updateProfileSubmit(event)">
                                     <!-- PATIENT SPECIFIC SECTION -->
                                     <div id="patientSection" style="display: none;">
@@ -82,9 +84,13 @@
                                                 <label>Phone Number</label>
                                                 <input type="text" class="form-control" id="profilePhone" placeholder="Enter phone number">
                                             </div>
-                                            <div class="col-md-6 form-group">
+                                            <div class="col-md-3 form-group">
                                                 <label>Date of Birth</label>
                                                 <input type="date" class="form-control" id="profileDob">
+                                            </div>
+                                            <div class="col-md-3 form-group">
+                                                <label>Age</label>
+                                                <input type="number" class="form-control" id="profileAge" placeholder="Years">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -158,76 +164,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12 col-lg-4">
-                        <div class="card profile-summary">
-                            <div class="card-body">
-                                <h5 class="mb-3">Profile Snapshot</h5>
-                                <div class="summary-item mb-3">
-                                    <span class="summary-icon bg-primary text-white"><i class="fas fa-user"></i></span>
-                                    <div>
-                                        <small class="text-muted">Account type</small>
-                                        <div id="profileAccountType" class="font-weight-bold">Patient</div>
-                                    </div>
-                                </div>
-                                <div class="summary-item mb-3">
-                                    <span class="summary-icon bg-success text-white"><i class="fas fa-envelope"></i></span>
-                                    <div>
-                                        <small class="text-muted">Registered email</small>
-                                        <div id="profileAccountEmail" class="font-weight-bold">user@example.com</div>
-                                    </div>
-                                </div>
-                                <div class="summary-item mb-4">
-                                    <span class="summary-icon bg-info text-white"><i class="fas fa-clock"></i></span>
-                                    <div>
-                                        <small class="text-muted">Last updated</small>
-                                        <div id="profileLastUpdated" class="font-weight-bold">Today</div>
-                                    </div>
-                                </div>
-
-                                <div class="quick-links">
-                                    <h5 class="mb-3">Quick access</h5>
-                                    <a class="profile-link" href="subscription.html"><i class="fas fa-crown"></i> Subscription / Pro</a>
-                                    <a class="profile-link" href="family.html"><i class="fas fa-users"></i> Family Members</a>
-                                    <a class="profile-link" href="reports.html"><i class="fas fa-file-medical-alt"></i> Reports</a>
-                                    <a class="profile-link" href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <footer class="footer footer-dark">
-                <div class="footer-grid">
-                    <div class="footer-col footer-brand">
-                        <h5>MediLab</h5>
-                        <p>Modern diagnostics, seamless bookings, and lab reports that keep your health journey on track.</p>
-                    </div>
-                    <div class="footer-col">
-                        <h6>Quick Links</h6>
-                        <a href="dashboard.html">Dashboard</a>
-                        <a href="bookings.html">Bookings</a>
-                        <a href="reports.html">Reports</a>
-                        <a href="profile.html">Profile</a>
-                    </div>
-                    <div class="footer-col">
-                        <h6>Support</h6>
-                        <a href="settings.html">Settings</a>
-                        <a href="subscription.html">Subscription</a>
-                        <a href="history.html">History</a>
-                        <a href="family.html">Family</a>
-                    </div>
-                    <div class="footer-col">
-                        <h6>Contact</h6>
-                        <p>help@medilab.com</p>
-                        <p>+91 98765 43210</p>
-                        <p>Ahmedabad, India</p>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2026 MediLab. Designed for streamlined diagnostics and trusted lab care.</p>
-                </div>
-            </footer>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

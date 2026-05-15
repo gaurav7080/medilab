@@ -221,9 +221,8 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2026 MediLab. All rights reserved.</p>
-    </footer>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -232,7 +231,6 @@
     <script>
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            initializeSampleData();
             checkAuth();
             loadSidebar();
 
@@ -254,43 +252,7 @@
             
             loadManageTestsPage();
             setupTestFilters();
-            updateTestStats();
         });
-
-        // Load Tests for this page
-        async function loadManageTestsPage() {
-            const user = SessionManager.getUser();
-            const tests = JSON.parse(localStorage.getItem('tests') || '[]');
-            const labTests = tests.filter(t => t.labId === user.labId);
-            
-            const testsGrid = document.getElementById('testsGrid');
-            const emptyState = document.getElementById('emptyState');
-            
-            testsGrid.innerHTML = '';
-
-            if (labTests.length === 0) {
-                emptyState.style.display = 'block';
-                return;
-            }
-
-            emptyState.style.display = 'none';
-            document.getElementById('statsSection').style.display = 'flex';
-
-            labTests.forEach(test => {
-                const template = document.getElementById('testCardTemplate').content.cloneNode(true);
-                
-                template.getElementById('testBadge').textContent = test.category;
-                template.getElementById('testTitle').innerHTML = `<i class="fas fa-flask-vial text-success"></i> ${test.testName}`;
-                template.getElementById('testDescription').textContent = test.description.substring(0, 80) + '...';
-                template.getElementById('testPrice').textContent = `₹${test.price}`;
-                template.getElementById('testTurnaround').textContent = test.turnaroundTime;
-                
-                template.getElementById('editTestBtn').onclick = () => showTestForm(test.id);
-                template.getElementById('deleteTestBtn').onclick = () => deleteTest(test.id);
-
-                testsGrid.appendChild(template);
-            });
-        }
 
         // Setup Search & Filter
         function setupTestFilters() {
@@ -312,8 +274,8 @@
             const cards = document.querySelectorAll('.test-card');
 
             cards.forEach(card => {
-                const title = card.querySelector('#testTitle').textContent.toLowerCase();
-                const badge = card.querySelector('#testBadge').textContent;
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const badge = card.querySelector('.badge').textContent;
                 
                 const matchesSearch = !searchTerm || title.includes(searchTerm);
                 const matchesCategory = !categoryTerm || badge === categoryTerm;
@@ -321,25 +283,7 @@
                 card.parentElement.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
             });
         }
-
-        // Update Test Stats
-        function updateTestStats() {
-            const user = SessionManager.getUser();
-            const tests = JSON.parse(localStorage.getItem('tests') || '[]');
-            const labTests = tests.filter(t => t.labId === user.labId);
-
-            if (labTests.length === 0) return;
-
-            const totalTests = labTests.length;
-            const avgPrice = Math.round(labTests.reduce((sum, t) => sum + t.price, 0) / totalTests);
-            const categories = new Set(labTests.map(t => t.category)).size;
-            const fastTests = labTests.filter(t => t.turnaroundTime === '24 hours').length;
-
-            document.getElementById('totalTestsCount').textContent = totalTests;
-            document.getElementById('avgPriceCount').textContent = `₹${avgPrice}`;
-            document.getElementById('categoriesCount').textContent = categories;
-            document.getElementById('fastTestsCount').textContent = fastTests;
-        }
+    </script>
     </script>
 </body>
 </html>
