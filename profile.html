@@ -51,78 +51,126 @@
             <div class="container-fluid mt-4">
                 <h2><i class="fas fa-user"></i> Your Profile</h2>
                 <p class="text-muted">Update your personal details here.</p>
-                <div class="card col-md-6 mt-4">
-                    <div class="card-body">
-                        <form id="profileForm" onsubmit="updateProfileSubmit(event)">
-                            <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label>Full Name</label>
-                                    <input type="text" class="form-control" id="profileName" required>
+                <div class="row profile-row mt-4">
+                    <div class="col-12 col-lg-8">
+                        <div class="card profile-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
+                                    <div>
+                                        <h4 class="card-title mb-1">Personal Details</h4>
+                                        <p class="text-muted mb-0">Edit your profile information with clean, responsive layout.</p>
+                                    </div>
+                                    <span class="badge badge-pill badge-info px-3 py-2 mt-3 mt-lg-0">Verified</span>
                                 </div>
-                                <div class="col-md-6 form-group">
-                                    <label>Email</label>
-                                    <input type="email" class="form-control" id="profileEmail" disabled>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control" id="profilePhone" placeholder="1234567890">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label>Date of Birth</label>
-                                    <input type="date" class="form-control" id="profileDob">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label>Gender</label>
-                                    <select class="form-control" id="profileGender">
-                                        <option value="">Select Gender</option>
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label>Blood Group</label>
-                                    <select class="form-control" id="profileBloodGroup">
-                                        <option value="">Unknown / Select</option>
-                                        <option>A+</option><option>A-</option>
-                                        <option>B+</option><option>B-</option>
-                                        <option>O+</option><option>O-</option>
-                                        <option>AB+</option><option>AB-</option>
-                                    </select>
-                                </div>
-                            </div>
 
-                            <!-- Admin Lab Details (Hidden by default) -->
-                            <div id="labDetailsSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                                <h5><i class="fas fa-hospital"></i> Lab Information</h5>
-                                <div class="row mt-3">
-                                    <div class="col-md-6 form-group">
-                                        <label>Lab Name</label>
-                                        <input type="text" class="form-control" id="labName" disabled>
+                                <form id="profileForm" onsubmit="updateProfileSubmit(event)">
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Full Name</label>
+                                            <input type="text" class="form-control" id="profileName" required>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" id="profileEmail" disabled>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 form-group">
-                                        <label>Lab Location</label>
-                                        <input type="text" class="form-control" id="labLocation" disabled>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Phone</label>
+                                            <input type="text" class="form-control" id="profilePhone" placeholder="1234567890">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Date of Birth</label>
+                                            <input type="date" class="form-control" id="profileDob">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Gender</label>
+                                            <select class="form-control" id="profileGender">
+                                                <option value="">Select Gender</option>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                                <option>Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Blood Group</label>
+                                            <select class="form-control" id="profileBloodGroup">
+                                                <option value="">Unknown / Select</option>
+                                                <option>A+</option><option>A-</option>
+                                                <option>B+</option><option>B-</option>
+                                                <option>O+</option><option>O-</option>
+                                                <option>AB+</option><option>AB-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div id="labDetailsSection" class="admin-section mt-4">
+                                        <h5 class="mb-3"><i class="fas fa-hospital"></i> Lab Information</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label>Lab Name</label>
+                                                <input type="text" class="form-control" id="labName" disabled>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Lab Location</label>
+                                                <input type="text" class="form-control" id="labLocation" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label>Lab Registration ID</label>
+                                                <input type="text" class="form-control" id="labIdNum" disabled>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Lab GST</label>
+                                                <input type="text" class="form-control" id="labGst" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary mt-3 w-100"><i class="fas fa-save"></i> Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                        <div class="card profile-summary">
+                            <div class="card-body">
+                                <h5 class="mb-3">Profile Snapshot</h5>
+                                <div class="summary-item mb-3">
+                                    <span class="summary-icon bg-primary text-white"><i class="fas fa-user"></i></span>
+                                    <div>
+                                        <small class="text-muted">Account type</small>
+                                        <div id="profileAccountType" class="font-weight-bold">Patient</div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label>Lab Registration ID</label>
-                                        <input type="text" class="form-control" id="labIdNum" disabled>
+                                <div class="summary-item mb-3">
+                                    <span class="summary-icon bg-success text-white"><i class="fas fa-envelope"></i></span>
+                                    <div>
+                                        <small class="text-muted">Registered email</small>
+                                        <div id="profileAccountEmail" class="font-weight-bold">user@example.com</div>
                                     </div>
-                                    <div class="col-md-6 form-group">
-                                        <label>Lab GST</label>
-                                        <input type="text" class="form-control" id="labGst" disabled>
+                                </div>
+                                <div class="summary-item mb-4">
+                                    <span class="summary-icon bg-info text-white"><i class="fas fa-clock"></i></span>
+                                    <div>
+                                        <small class="text-muted">Last updated</small>
+                                        <div id="profileLastUpdated" class="font-weight-bold">Today</div>
                                     </div>
+                                </div>
+
+                                <div class="quick-links">
+                                    <h5 class="mb-3">Quick access</h5>
+                                    <a class="profile-link" href="subscription.html"><i class="fas fa-crown"></i> Subscription / Pro</a>
+                                    <a class="profile-link" href="family.html"><i class="fas fa-users"></i> Family Members</a>
+                                    <a class="profile-link" href="reports.html"><i class="fas fa-file-medical-alt"></i> Reports</a>
+                                    <a class="profile-link" href="settings.html"><i class="fas fa-cog"></i> Settings</a>
                                 </div>
                             </div>
-
-                            <button type="submit" class="btn btn-primary mt-3 w-100"><i class="fas fa-save"></i> Save Changes</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
