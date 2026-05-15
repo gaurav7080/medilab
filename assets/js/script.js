@@ -398,28 +398,51 @@ function loadSidebar() {
     if (!user) return;
     const sidebar = document.querySelector('.sidebar');
     if (!sidebar) return;
+    
     const profileHtml = `
         <div class="sidebar-profile">
             <div class="sidebar-profile-inner">
                 <div>
                     <div class="sidebar-profile-name">${user.name}</div>
-                    <div class="sidebar-profile-role">${user.role}</div>
+                    <div class="sidebar-profile-role text-primary font-weight-bold">${user.role === 'Admin' ? 'LAB ADMIN' : 'PATIENT'}</div>
                 </div>
                 <button type="button" class="sidebar-close" aria-label="Close menu">&times;</button>
             </div>
             <div class="sidebar-profile-meta">
                 <span class="sidebar-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
-                <a href="profile.html" class="sidebar-profile-link"><i class="fas fa-user-circle"></i> View Profile</a>
+                <a href="profile.html" class="sidebar-profile-link"><i class="fas fa-user-circle"></i> Profile Settings</a>
             </div>
         </div>
     `;
-    let nav = `${profileHtml}<div class="sidebar-head"><h2><i class="fas fa-flask"></i> MediLab</h2></div>
-        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>`;
-    if (user.role === 'Patient') nav += '<a href="book-test.html"><i class="fas fa-plus-circle"></i> Book Test</a>';
-    nav += '<a href="bookings.html"><i class="fas fa-list"></i> Bookings</a><a href="reports.html"><i class="fas fa-file-medical"></i> Reports</a>';
-    if (user.role === 'Admin') nav += '<a href="upload-reports.html"><i class="fas fa-upload"></i> Upload Report</a><a href="manage-tests.html"><i class="fas fa-flask"></i> Manage Tests</a>';
-    nav += '<a href="javascript:void(0);" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>';
-    sidebar.innerHTML = nav;
+
+    let navItems = `
+        <div class="sidebar-head">
+            <h2><i class="fas fa-flask"></i> MediLab</h2>
+        </div>
+        <a href="dashboard.html" class="${window.location.pathname.includes('dashboard') ? 'active' : ''}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    `;
+
+    if (user.role === 'Patient') {
+        navItems += `
+            <a href="book-test.html" class="${window.location.pathname.includes('book-test') ? 'active' : ''}"><i class="fas fa-plus-circle"></i> Book New Test</a>
+            <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-calendar-alt"></i> My Bookings</a>
+            <a href="reports.html" class="${window.location.pathname.includes('reports') ? 'active' : ''}"><i class="fas fa-file-medical-alt"></i> Medical Reports</a>
+            <a href="family.html" class="${window.location.pathname.includes('family') ? 'active' : ''}"><i class="fas fa-users"></i> Family Members</a>
+        `;
+    } else if (user.role === 'Admin') {
+        navItems += `
+            <a href="bookings.html" class="${window.location.pathname.includes('bookings') ? 'active' : ''}"><i class="fas fa-clipboard-list"></i> Manage Orders</a>
+            <a href="upload-reports.html" class="${window.location.pathname.includes('upload-reports') ? 'active' : ''}"><i class="fas fa-upload"></i> Upload Results</a>
+            <a href="manage-tests.html" class="${window.location.pathname.includes('manage-tests') ? 'active' : ''}"><i class="fas fa-flask"></i> Test Catalog</a>
+        `;
+    }
+
+    navItems += `
+        <a href="settings.html" class="${window.location.pathname.includes('settings') ? 'active' : ''}"><i class="fas fa-cog"></i> Settings</a>
+        <a href="javascript:void(0);" onclick="logout()" class="text-danger mt-4"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+    `;
+
+    sidebar.innerHTML = `${profileHtml}${navItems}`;
 }
 
 function goToPage(page) { 
@@ -551,8 +574,48 @@ function loadNavbarProfile() {
     
     if (navProfileName) navProfileName.textContent = user.name;
     if (menuProfileName) menuProfileName.textContent = user.name;
-    if (menuProfileRole) menuProfileRole.textContent = user.role;
+    if (menuProfileRole) menuProfileRole.textContent = user.role === 'Admin' ? 'Lab Administrator' : 'Patient';
     if (navProfilePic) navProfilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=00f2fe&color=000`;
+
+    // Role-based Navbar Dropdown Items
+    const profileMenu = document.querySelector('.profile-menu');
+    if (profileMenu) {
+        let menuItems = `
+            <div class="dropdown-header d-flex align-items-center">
+                <div class="header-avatar mr-3">
+                    <i class="fas fa-user-circle fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 text-white">${user.name}</h6>
+                    <small class="text-muted">${user.role === 'Admin' ? 'Lab Administrator' : 'Patient'}</small>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="profile.html"><i class="fas fa-user-edit text-primary"></i> Profile Settings</a>
+        `;
+
+        if (user.role === 'Patient') {
+            menuItems += `
+                <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
+                <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Manage Family</a>
+                <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> My Reports</a>
+                <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Test History</a>
+            `;
+        } else if (user.role === 'Admin') {
+            menuItems += `
+                <a class="dropdown-item" href="bookings.html"><i class="fas fa-tasks text-success"></i> Manage Orders</a>
+                <a class="dropdown-item" href="manage-tests.html"><i class="fas fa-flask text-info"></i> Test Catalog</a>
+                <a class="dropdown-item" href="upload-reports.html"><i class="fas fa-upload text-warning"></i> Upload Results</a>
+            `;
+        }
+
+        menuItems += `
+            <a class="dropdown-item" href="settings.html"><i class="fas fa-cog text-light"></i> Account Settings</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        `;
+        profileMenu.innerHTML = menuItems;
+    }
 }
 
 // ─── Family Management ─────────────────────────────────────
@@ -640,22 +703,64 @@ async function loadProfilePageData() {
         // Update Session in case anything changed
         SessionManager.setUser(user);
         
-        document.getElementById('profileName').value = user.name || '';
-        document.getElementById('profileEmail').value = user.email || '';
-        document.getElementById('profilePhone').value = user.phone || '';
-        if (user.gender) document.getElementById('profileGender').value = user.gender;
-        if (user.blood_group) document.getElementById('profileBloodGroup').value = user.blood_group;
-        if (user.dob) document.getElementById('profileDob').value = user.dob.split('T')[0];
+        const patientSection = document.getElementById('patientSection');
+        const labAdminSection = document.getElementById('labAdminSection');
 
-        // Show lab details if Admin
-        if (user.role === 'Admin' && user.labs) {
-            document.getElementById('labDetailsSection').style.display = 'block';
-            document.getElementById('labName').value = user.labs.name || '';
-            document.getElementById('labLocation').value = user.labs.location || '';
-            document.getElementById('labIdNum').value = user.labs.lab_id || '';
-            document.getElementById('labGst').value = user.labs.gst_number || '';
+        if (user.role === 'Patient') {
+            if (patientSection) patientSection.style.display = 'block';
+            if (labAdminSection) labAdminSection.style.display = 'none';
+
+            if (document.getElementById('profileName')) document.getElementById('profileName').value = user.name || '';
+            if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = user.email || '';
+            if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = user.phone || '';
+            if (user.gender && document.getElementById('profileGender')) document.getElementById('profileGender').value = user.gender;
+            if (user.blood_group && document.getElementById('profileBloodGroup')) document.getElementById('profileBloodGroup').value = user.blood_group;
+            if (user.dob && document.getElementById('profileDob')) document.getElementById('profileDob').value = user.dob.split('T')[0];
+        } else if (user.role === 'Admin') {
+            if (patientSection) patientSection.style.display = 'none';
+            if (labAdminSection) labAdminSection.style.display = 'block';
+
+            if (document.getElementById('adminName')) document.getElementById('adminName').value = user.name || '';
+            if (document.getElementById('adminEmail')) document.getElementById('adminEmail').value = user.email || '';
+
+            if (user.labs) {
+                if (document.getElementById('labName')) document.getElementById('labName').value = user.labs.name || '';
+                if (document.getElementById('labLocation')) document.getElementById('labLocation').value = user.labs.location || '';
+                if (document.getElementById('labIdNum')) document.getElementById('labIdNum').value = user.labs.lab_id || '';
+                if (document.getElementById('labGst')) document.getElementById('labGst').value = user.labs.gst_number || '';
+            }
         }
+
+        // Update Quick Links based on role
+        const quickLinks = document.querySelector('.quick-links');
+        if (quickLinks) {
+            let linksHtml = '<h5 class="mb-3">Quick access</h5>';
+            if (user.role === 'Patient') {
+                linksHtml += `
+                    <a class="profile-link" href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade to Pro</a>
+                    <a class="profile-link" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
+                    <a class="profile-link" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> My Reports</a>
+                    <a class="profile-link" href="history.html"><i class="fas fa-history text-secondary"></i> Test History</a>
+                `;
+            } else if (user.role === 'Admin') {
+                linksHtml += `
+                    <a class="profile-link" href="bookings.html"><i class="fas fa-tasks text-success"></i> Manage Orders</a>
+                    <a class="profile-link" href="manage-tests.html"><i class="fas fa-flask text-info"></i> Test Catalog</a>
+                    <a class="profile-link" href="upload-reports.html"><i class="fas fa-upload text-warning"></i> Upload Results</a>
+                `;
+            }
+            linksHtml += '<a class="profile-link" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>';
+            quickLinks.innerHTML = linksHtml;
+        }
+
+        // Update Account Type in summary
+        const accType = document.getElementById('profileAccountType');
+        if (accType) accType.textContent = user.role === 'Admin' ? 'Lab Administrator' : 'Patient';
+        const accEmail = document.getElementById('profileAccountEmail');
+        if (accEmail) accEmail.textContent = user.email;
+
     } catch (err) {
+        console.error(err);
         showAlert('Failed to load profile details.', 'danger');
     } finally {
         hideLoader();
@@ -664,13 +769,25 @@ async function loadProfilePageData() {
 
 async function updateProfileSubmit(event) {
     event.preventDefault();
-    const body = {
-        name: document.getElementById('profileName').value,
-        phone: document.getElementById('profilePhone').value,
-        gender: document.getElementById('profileGender').value,
-        blood_group: document.getElementById('profileBloodGroup').value,
-        dob: document.getElementById('profileDob').value
-    };
+    const user = SessionManager.getUser();
+    if (!user) return;
+
+    let body = {};
+
+    if (user.role === 'Patient') {
+        body = {
+            name: document.getElementById('profileName').value,
+            phone: document.getElementById('profilePhone').value,
+            gender: document.getElementById('profileGender').value,
+            blood_group: document.getElementById('profileBloodGroup').value,
+            dob: document.getElementById('profileDob').value
+        };
+    } else if (user.role === 'Admin') {
+        body = {
+            name: document.getElementById('adminName').value,
+            // Add other admin-editable fields if any
+        };
+    }
 
     try {
         await apiCall('/auth/profile', {
@@ -679,8 +796,13 @@ async function updateProfileSubmit(event) {
         });
         showAlert('Profile updated successfully!', 'success');
         
-        // Refresh navbar profile
+        // Update user in session
+        const updatedUser = { ...user, ...body };
+        SessionManager.setUser(updatedUser);
+        
+        // Refresh navbar and sidebar profile
         loadNavbarProfile(); 
+        loadSidebar();
     } catch (err) {
         showAlert(err.message || 'Error updating profile', 'danger');
     }
