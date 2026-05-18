@@ -84,13 +84,13 @@ function toggleMediBot() {
 function botTalk(query) {
     const resp = document.getElementById('botResponse');
     resp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-    
+
     setTimeout(() => {
         let answer = "I'm processing your request. Please check our dedicated sections for more details.";
         if (query.includes('healthy')) answer = "Stay hydrated, exercise 30 mins daily, and get regular checkups at MediLab! 🍏";
         if (query.includes('report')) answer = "You can view and download your reports from the 'Medical Reports' section once they are ready.";
         if (query.includes('Book')) answer = "Click on 'Book New Test' to schedule your next health checkup instantly!";
-        
+
         resp.innerHTML = `<i class="fas fa-comment-dots"></i> ${answer}`;
     }, 1000);
 }
@@ -273,8 +273,8 @@ async function login(event) {
 }
 
 // ─── Logout ──────────────────────────────────────────────
-function logout() { 
-    SessionManager.clearUser(); 
+function logout() {
+    SessionManager.clearUser();
     showLoader('LOGGING OUT...');
     setTimeout(() => { window.location.href = 'index.html'; }, 800);
 }
@@ -305,7 +305,7 @@ async function loadDashboard() {
             const ab = document.getElementById('approvedBookings'); if (ab) ab.innerText = s.approvedBookings;
             const cb = document.getElementById('completedBookings'); if (cb) cb.innerText = s.completedBookings;
         }
-        
+
         // --- Init Futuristic Components ---
         initHealthMetrics();
     } catch (err) { console.error('Dashboard error:', err); }
@@ -336,7 +336,7 @@ async function bookTest(event) {
     const testName = document.getElementById('testName').value.trim();
     const labId = document.getElementById('labSelect').value;
     const patientName = document.getElementById('patientName') ? document.getElementById('patientName').value.trim() : user.name;
-    
+
     if (!testName || testName.length < 3) { showAlert('Test name must be at least 3 chars!', 'warning'); return; }
     if (!labId) { showAlert('Please select a lab.', 'warning'); return; }
     if (!patientName) { showAlert('Patient name is required.', 'warning'); return; }
@@ -506,7 +506,7 @@ function loadSidebar() {
     if (!user) return;
     const sidebar = document.querySelector('.sidebar');
     if (!sidebar) return;
-    
+
     const profileHtml = `
         <div class="sidebar-profile">
             <div class="sidebar-profile-inner">
@@ -553,7 +553,7 @@ function loadSidebar() {
     sidebar.innerHTML = `${profileHtml}${navItems}`;
 }
 
-function goToPage(page) { 
+function goToPage(page) {
     showLoader('REDIRECTING...');
     setTimeout(() => { window.location.href = page; }, 600);
 }
@@ -609,11 +609,11 @@ function showTestForm(testId = null) {
         const formHTML = `
             <div class="form-group"><label>Test Name *</label><input type="text" id="testNameInput" class="form-control" value="${tName}" required></div>
             <div class="form-group"><label>Category *</label><select id="testCategoryInput" class="form-control">
-                <option value="">Select</option>${['Haematology','Biochemistry','Immunology','Virology','Microbiology','Endocrinology','Cardiology','Other'].map(c => `<option value="${c}" ${t && t.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                <option value="">Select</option>${['Haematology', 'Biochemistry', 'Immunology', 'Virology', 'Microbiology', 'Endocrinology', 'Cardiology', 'Other'].map(c => `<option value="${c}" ${t && t.category === c ? 'selected' : ''}>${c}</option>`).join('')}
             </select></div>
             <div class="form-group"><label>Price (₹) *</label><input type="number" id="testPriceInput" class="form-control" value="${t ? t.price : ''}" min="0"></div>
             <div class="form-group"><label>Turnaround *</label><select id="testTurnaroundInput" class="form-control">
-                <option value="">Select</option>${['24 hours','48 hours','72 hours','1 week'].map(v => `<option value="${v}" ${t && tTime === v ? 'selected' : ''}>${v}</option>`).join('')}
+                <option value="">Select</option>${['24 hours', '48 hours', '72 hours', '1 week'].map(v => `<option value="${v}" ${t && tTime === v ? 'selected' : ''}>${v}</option>`).join('')}
             </select></div>
             <div class="form-group"><label>Description *</label><textarea id="testDescInput" class="form-control" rows="3">${t ? t.description : ''}</textarea></div>`;
 
@@ -674,12 +674,12 @@ async function deleteTest(testId) {
 function loadNavbarProfile() {
     const user = SessionManager.getUser();
     if (!user) return;
-    
+
     const navProfileName = document.getElementById('navProfileName');
     const menuProfileName = document.getElementById('menuProfileName');
     const menuProfileRole = document.getElementById('menuProfileRole');
     const navProfilePic = document.getElementById('navProfilePic');
-    
+
     if (navProfileName) navProfileName.textContent = user.name;
     if (menuProfileName) menuProfileName.textContent = user.name;
     if (menuProfileRole) menuProfileRole.textContent = user.role === 'Admin' ? 'Lab Administrator' : 'Patient';
@@ -731,11 +731,11 @@ function loadNavbarProfile() {
 async function loadFamilyMembers() {
     const familyGrid = document.getElementById('familyGrid');
     if (!familyGrid) return;
-    
+
     try {
         const data = await apiCall('/family');
         familyGrid.innerHTML = '';
-        
+
         if (!data.family || data.family.length === 0) {
             familyGrid.innerHTML = '<div class="col-12 text-center text-muted"><p>No family members added yet.</p></div>';
             return;
@@ -767,7 +767,7 @@ async function loadFamilyMembers() {
 
 async function addFamilyMemberSubmit(event) {
     event.preventDefault();
-    
+
     const body = {
         name: document.getElementById('famName').value,
         relation: document.getElementById('famRelation').value,
@@ -781,7 +781,7 @@ async function addFamilyMemberSubmit(event) {
             method: 'POST',
             body: JSON.stringify(body)
         });
-        
+
         $('#addFamilyModal').modal('hide');
         document.getElementById('addFamilyForm').reset();
         showAlert('Member added successfully!', 'success');
@@ -808,10 +808,10 @@ async function loadProfilePageData() {
     try {
         const data = await apiCall('/auth/me');
         const user = data.user;
-        
+
         // Update Session in case anything changed
         SessionManager.setUser(user);
-        
+
         const patientSection = document.getElementById('patientSection');
         const labAdminSection = document.getElementById('labAdminSection');
 
@@ -879,13 +879,13 @@ async function updateProfileSubmit(event) {
             body: JSON.stringify(body)
         });
         showAlert('Profile updated successfully!', 'success');
-        
+
         // Update user in session
         const updatedUser = { ...user, ...body };
         SessionManager.setUser(updatedUser);
-        
+
         // Refresh navbar and sidebar profile
-        loadNavbarProfile(); 
+        loadNavbarProfile();
         loadSidebar();
     } catch (err) {
         showAlert(err.message || 'Error updating profile', 'danger');
@@ -893,22 +893,22 @@ async function updateProfileSubmit(event) {
 }
 
 // ─── Init ────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initGlobalLoader();
     checkAuth();
     loadSidebar();
     loadNavbarProfile();
     initializeMobileMenu();
-    
+
     if (window.location.pathname.includes('family.html')) {
         loadFamilyMembers();
     }
-    
+
     if (window.location.pathname.includes('profile.html') || window.location.pathname.includes('subscription.html')) {
         if (window.location.pathname.includes('profile.html')) loadProfilePageData();
         loadSubscriptionPlans();
     }
-    
+
     if (window.location.pathname.includes('book-test.html')) {
         const urlParams = new URLSearchParams(window.location.search);
         const patientNameParam = urlParams.get('patient');
@@ -918,7 +918,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         loadFeaturedLabs();
     }
-    
+
     // Smooth page load effect
     const loader = document.getElementById('globalLoader');
     if (loader) {
@@ -933,7 +933,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('reportsTable')) loadReports();
     if (document.getElementById('bookingId')) loadUploadReports();
     if (document.getElementById('labSelect')) loadLabOptions('labSelect');
-    
+
     // Inject Global Footer
     renderGlobalFooter();
 });
@@ -946,7 +946,7 @@ function renderGlobalFooter() {
 
     let target = document.querySelector('.main');
     if (!target) target = document.body;
-    
+
     // Remove any existing static footers to avoid duplication
     document.querySelectorAll('.footer, .explore-footer').forEach(f => f.remove());
 
@@ -988,7 +988,7 @@ function renderGlobalFooter() {
             </div>
         </footer>
     `;
-    
+
     target.insertAdjacentHTML('beforeend', footerHTML);
 }
 
@@ -996,7 +996,7 @@ function renderGlobalFooter() {
 async function loadManageTestsPage() {
     const user = SessionManager.getUser();
     if (!user || user.role !== 'Admin') return;
-    
+
     const testsGrid = document.getElementById('testsGrid');
     const emptyState = document.getElementById('emptyState');
     if (!testsGrid) return;
@@ -1007,11 +1007,11 @@ async function loadManageTestsPage() {
             <div class="card skeleton-card skeleton"></div>
         </div>
     `).join('');
-    
+
     try {
-        const data = await apiCall('/tests/my-lab'); 
+        const data = await apiCall('/tests/my-lab');
         const labTests = data.tests || [];
-        
+
         testsGrid.innerHTML = '';
 
         if (labTests.length === 0) {
@@ -1053,7 +1053,7 @@ async function loadManageTestsPage() {
             `;
             testsGrid.appendChild(card);
         });
-        
+
         updateTestStats(labTests);
 
     } catch (err) {
@@ -1069,11 +1069,11 @@ function updateTestStats(tests) {
     const avg = document.getElementById('avgPriceCount');
     const fast = document.getElementById('fastTestsCount');
     if (!total || !avg) return;
-    
+
     total.textContent = tests.length;
     const avgP = tests.length > 0 ? Math.round(tests.reduce((sum, t) => sum + (t.price || 0), 0) / tests.length) : 0;
     avg.textContent = `₹${avgP}`;
-    
+
     if (fast) {
         const fastCount = tests.filter(t => (t.turnaroundTime || t.turnaround_time || '').toLowerCase().includes('24')).length;
         fast.textContent = fastCount;
@@ -1089,7 +1089,7 @@ function loadSubscriptionPlans() {
     if (!user) return;
 
     const isPatient = user.role === 'Patient';
-    
+
     const plans = isPatient ? [
         {
             name: "Basic",
@@ -1210,10 +1210,10 @@ async function loadFeaturedLabs() {
     try {
         const data = await apiCall('/labs');
         const labs = data.labs || [];
-        
+
         // Filter "Featured" labs (Simulating premium status)
         const featured = labs.slice(0, 3); // Take first 3 as featured for demo
-        
+
         list.innerHTML = featured.map(lab => `
             <div class="col-4">
                 <div class="featured-lab-card" onclick="selectRecommendedLab('${lab.id}', '${lab.name}')">
@@ -1229,7 +1229,7 @@ async function loadFeaturedLabs() {
 function selectRecommendedLab(id, name) {
     const select = document.getElementById('labSelect');
     if (!select) return;
-    
+
     select.value = id;
     toast(`✓ Selected ${name}`, 'success');
 }
@@ -1240,7 +1240,7 @@ async function comparePrices() {
     const query = document.getElementById('testName').value.trim();
     const tool = document.getElementById('priceComparisonTool');
     const container = document.getElementById('comparisonResults');
-    
+
     if (!query || query.length < 3) {
         if (tool) tool.style.display = 'none';
         return;
@@ -1253,11 +1253,11 @@ async function comparePrices() {
             // For now, we simulate by fetching all labs and showing sample prices.
             const data = await apiCall('/labs');
             const labs = data.labs || [];
-            
+
             if (labs.length === 0) return;
-            
+
             if (tool) tool.style.display = 'block';
-            
+
             // Generate some dynamic mock prices based on test name length and lab name
             const results = labs.map(lab => {
                 const basePrice = 500 + (query.length * 20);
