@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/db');
 
+// Security/performance: allow tuning bcrypt cost via env var (default 10)
+const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10) || 10;
+
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, labName, labLocation, labGST, labIdNumber, labPhone, labProfile } = req.body;
@@ -22,7 +25,7 @@ exports.register = async (req, res) => {
             labRef = lab.id;
         }
 
-        const salt = await bcrypt.genSalt(12);
+        const salt = await bcrypt.genSalt(SALT_ROUNDS);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const { data: user, error: userErr } = await supabase.from('users').insert({
@@ -46,7 +49,8 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
         if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-        const { data: user, error } = await supabase.from('users').select('*, labs(*)').eq('email', email).single();
+        // Select minimal fields for login to reduce DB payload and latency
+        const { data: user, error } = await supabase.from('users').select('id, email, password, role, name, lab_id').eq('email', email).single();
         if (error || !user) return res.status(401).json({ error: 'Invalid email or password' });
 
         const isMatch = await bcrypt.compare(password, user.password);

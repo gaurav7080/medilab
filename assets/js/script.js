@@ -197,11 +197,99 @@ function showAlert(message, type) {
     setTimeout(() => { alertDiv.classList.add('alert-removing'); setTimeout(() => alertDiv.remove(), 300); }, 4000);
 }
 
+function toast(message, type = 'info') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+    }
+
+    const toastItem = document.createElement('div');
+    toastItem.className = `toast-item ${type}`;
+    
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'danger') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+
+    toastItem.innerHTML = `
+        <i class="fas ${icon}" style="font-size: 1.2rem; color: var(--${type}-color, var(--primary-color))"></i>
+        <div>${sanitizeInput(message)}</div>
+    `;
+    container.appendChild(toastItem);
+
+    setTimeout(() => {
+        toastItem.style.opacity = '0';
+        toastItem.style.transform = 'translateX(100%)';
+        toastItem.style.transition = 'all 0.4s ease-in';
+        setTimeout(() => {
+            toastItem.remove();
+            if (container.children.length === 0) {
+                container.remove();
+            }
+        }, 400);
+    }, 4000);
+}
+
 // ─── Mobile Menu ─────────────────────────────────────────
 function initializeMobileMenu() {
     const sidebar = document.querySelector('.sidebar');
-    const toggle = document.querySelector('.sidebar-toggle');
-    if (!toggle || !sidebar) return;
+    if (!sidebar) return;
+
+    // Dynamically insert premium mobile top navbar if not already present
+    let mobileHeader = document.getElementById('mobileHeaderBar');
+    if (!mobileHeader) {
+        mobileHeader = document.createElement('div');
+        mobileHeader.id = 'mobileHeaderBar';
+        mobileHeader.className = 'mobile-header-bar';
+
+        // Dynamically determine current active page/section title
+        const path = window.location.pathname.toLowerCase();
+        let pageTitle = 'Dashboard'; // Fallback
+        if (path.includes('dashboard')) {
+            pageTitle = 'Dashboard';
+        } else if (path.includes('book-test')) {
+            pageTitle = 'Book New Test';
+        } else if (path.includes('bookings')) {
+            const user = SessionManager.getUser();
+            pageTitle = (user && user.role === 'Admin') ? 'Manage Orders' : 'My Bookings';
+        } else if (path.includes('reports') || path.includes('upload-reports')) {
+            pageTitle = path.includes('upload') ? 'Upload Results' : 'Medical Reports';
+        } else if (path.includes('family')) {
+            pageTitle = 'Family Members';
+        } else if (path.includes('profile')) {
+            pageTitle = 'My Profile';
+        } else if (path.includes('settings')) {
+            pageTitle = 'Settings';
+        } else if (path.includes('subscription')) {
+            pageTitle = 'Upgrade to Pro';
+        } else if (path.includes('manage-tests')) {
+            pageTitle = 'Test Catalog';
+        } else if (path.includes('history')) {
+            pageTitle = 'Profile History';
+        } else {
+            const docTitle = document.title.replace('- MediLab', '').replace('MediLab', '').trim();
+            if (docTitle) pageTitle = docTitle;
+        }
+
+        mobileHeader.innerHTML = `
+            <div class="mobile-header-title"><i class="fas fa-flask text-primary mr-2"></i> ${pageTitle}</div>
+        `;
+        document.body.appendChild(mobileHeader);
+    }
+
+    // Dynamically insert premium mobile menu toggle if not already present
+    let mobileToggle = document.getElementById('mobileMenuToggle');
+    if (!mobileToggle) {
+        mobileToggle = document.createElement('button');
+        mobileToggle.id = 'mobileMenuToggle';
+        mobileToggle.className = 'mobile-menu-toggle';
+        mobileToggle.innerHTML = '<span></span>';
+        mobileToggle.setAttribute('aria-label', 'Toggle Navigation');
+        document.body.appendChild(mobileToggle);
+    }
+
     if (!document.querySelector('.mobile-overlay')) {
         const overlay = document.createElement('div');
         overlay.className = 'mobile-overlay';
@@ -209,12 +297,39 @@ function initializeMobileMenu() {
     }
     const overlay = document.querySelector('.mobile-overlay');
     const closeButton = sidebar.querySelector('.sidebar-close');
-    toggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('active'); toggle.classList.toggle('active'); overlay.classList.toggle('active'); });
-    if (closeButton) closeButton.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); });
-    overlay.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); });
-    sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); }));
+    const navbarToggle = document.querySelector('.sidebar-toggle');
+
+    const toggles = [navbarToggle, mobileToggle].filter(Boolean);
+
+    const toggleMenu = (e) => {
+        if (e) e.stopPropagation();
+        sidebar.classList.toggle('active');
+        toggles.forEach(t => t.classList.toggle('active'));
+        overlay.classList.toggle('active');
+    };
+
+    const closeAll = () => {
+        sidebar.classList.remove('active');
+        toggles.forEach(t => t.classList.remove('active'));
+        overlay.classList.remove('active');
+    };
+
+    toggles.forEach(t => t.addEventListener('click', toggleMenu));
+    if (closeButton) closeButton.addEventListener('click', closeAll);
+    overlay.addEventListener('click', closeAll);
+    
+    // Close sidebar on link click, EXCEPT when clicking the inner profile accordion settings link
+    sidebar.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (link.closest('#sidebarProfileSubmenu') || link.id === 'sidebarProfileTrigger' || link.closest('#sidebarProfileTrigger')) {
+                return; // Do not close if navigating profile submenu trigger
+            }
+            closeAll();
+        });
+    });
+
     sidebar.addEventListener('click', (e) => e.stopPropagation());
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { sidebar.classList.remove('active'); toggle.classList.remove('active'); overlay.classList.remove('active'); } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
 }
 
 // ─── Toggle Lab Fields ──────────────────────────────────
@@ -509,16 +624,29 @@ function loadSidebar() {
 
     const profileHtml = `
         <div class="sidebar-profile">
-            <div class="sidebar-profile-inner">
-                <div>
-                    <div class="sidebar-profile-name">${user.name}</div>
-                    <div class="sidebar-profile-role text-primary font-weight-bold">${user.role === 'Admin' ? 'LAB ADMIN' : 'PATIENT'}</div>
+            <!-- Dynamic Accordion Profile Header displaying User Name -->
+            <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
+                <div class="sidebar-profile-meta" id="sidebarProfileTrigger" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; flex-fill: 1; width: calc(100% - 40px);">
+                    <div class="d-flex align-items-center">
+                        <span class="sidebar-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+                        <div class="ml-2" style="line-height: 1.2;">
+                            <div class="sidebar-profile-name" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">${user.name}</div>
+                            <div class="sidebar-profile-role text-primary font-weight-bold" style="font-size: 0.75rem; text-transform: uppercase;">${user.role === 'Admin' ? 'LAB ADMIN' : 'PATIENT'}</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down profile-chevron mr-2" style="transition: transform 0.3s ease; color: var(--text-muted); font-size: 0.8rem;"></i>
                 </div>
-                <button type="button" class="sidebar-close" aria-label="Close menu">&times;</button>
+                <button type="button" class="sidebar-close" aria-label="Close menu" style="margin-left: auto;">&times;</button>
             </div>
-            <div class="sidebar-profile-meta">
-                <span class="sidebar-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
-                <a href="profile.html" class="sidebar-profile-link"><i class="fas fa-user-circle"></i> Profile Settings</a>
+            
+            <!-- Collapsible Submenu (No redundant logout option) -->
+            <div class="sidebar-profile-submenu" id="sidebarProfileSubmenu" style="max-height: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0;">
+                <a href="profile.html"><i class="fas fa-user-edit text-primary"></i> Edit Profile</a>
+                <a href="subscription.html"><i class="fas fa-crown text-warning"></i> Upgrade / Pro</a>
+                <a href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
+                <a href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> Reports</a>
+                <a href="history.html"><i class="fas fa-history text-secondary"></i> Profile History</a>
+                <a href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>
             </div>
         </div>
     `;
@@ -551,6 +679,28 @@ function loadSidebar() {
     `;
 
     sidebar.innerHTML = `${profileHtml}${navItems}`;
+
+    // Add interactivity to the responsive profile trigger
+    const trigger = sidebar.querySelector('#sidebarProfileTrigger');
+    const submenu = sidebar.querySelector('#sidebarProfileSubmenu');
+    const chevron = sidebar.querySelector('.profile-chevron');
+    if (trigger && submenu && chevron) {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isCollapsed = submenu.style.maxHeight === '0px' || submenu.style.maxHeight === '';
+            if (isCollapsed) {
+                submenu.style.maxHeight = '400px';
+                submenu.style.opacity = '1';
+                submenu.style.marginTop = '12px';
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                submenu.style.maxHeight = '0px';
+                submenu.style.opacity = '0';
+                submenu.style.marginTop = '0px';
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
 }
 
 function goToPage(page) {

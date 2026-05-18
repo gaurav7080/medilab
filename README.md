@@ -64,6 +64,14 @@ Then open `http://localhost:8000/index.html` in your browser.
 - Keep all HTML pages inside the root folder so the site can be served cleanly.
 - Use `.gitignore` to exclude editor and system files.
 
+## Environment variables
+
+- `JWT_SECRET` — secret used to sign authentication tokens.
+- `JWT_EXPIRE` — token expiry (e.g. `7d`).
+- `SALT_ROUNDS` — bcrypt cost factor for hashing passwords (default `10`).
+
+If you change `SALT_ROUNDS`, restart the server to apply the new setting. Lowering it improves registration/login latency but reduces hashing cost; choose an appropriate balance for your deployment.
+
 ## License
 
 This project is licensed under the MIT License. See `LICENSE` for details.
