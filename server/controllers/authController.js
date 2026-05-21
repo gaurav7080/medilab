@@ -102,3 +102,40 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({ error: 'Server error updating profile' });
     }
 };
+
+exports.upgradeSubscription = async (req, res) => {
+    try {
+        const { plan } = req.body;
+        if (!plan) return res.status(400).json({ error: 'Plan name is required' });
+
+        // Update in Supabase
+        const { data: user, error } = await supabase
+            .from('users')
+            .update({ subscription: plan })
+            .eq('id', req.user.id)
+            .select('*, labs(*)')
+            .single();
+
+        if (error) {
+            console.warn('Subscription column not found or DB error, falling back to dynamic simulated update:', error.message);
+            // Fallback mode: Fetch user, append subscription tier, return success
+            const { data: fallbackUser } = await supabase.from('users').select('*, labs(*)').eq('id', req.user.id).single();
+            if (!fallbackUser) return res.status(404).json({ error: 'User not found' });
+            
+            fallbackUser.subscription = plan;
+            if (fallbackUser) delete fallbackUser.password;
+            
+            return res.json({ 
+                success: true, 
+                user: fallbackUser,
+                message: 'Subscription updated successfully (Simulated mode). To persist permanently, run: ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription VARCHAR(20) DEFAULT \'Basic\'; in Supabase SQL editor.' 
+            });
+        }
+
+        if (user) delete user.password;
+        res.json({ success: true, user, message: 'Subscription upgraded successfully!' });
+    } catch (error) {
+        console.error('Subscription upgrade error:', error);
+        res.status(500).json({ error: 'Server error during subscription upgrade' });
+    }
+};

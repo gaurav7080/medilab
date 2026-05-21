@@ -1,13 +1,65 @@
+const jwt = require('jsonwebtoken');
 const supabase = require('../config/db');
+
+// Helper to check user subscription if token is present
+const getUserSubscription = async (req) => {
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    if (!token) return 'Basic';
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const { data: user } = await supabase.from('users').select('subscription, subscription_end_date').eq('id', decoded.id).single();
+        if (!user) return 'Basic';
+
+        // Check if expired
+        if (user.subscription_end_date && new Date(user.subscription_end_date) < new Date()) {
+            return 'Basic';
+        }
+        return user.subscription || 'Basic';
+    } catch (error) {
+        return 'Basic';
+    }
+};
 
 exports.getTests = async (req, res) => {
     try {
-        let query = supabase.from('tests').select('*, labs(name, location)');
+        let query = supabase.from('tests').select('*, labs(id, name, location)');
         if (req.query.labId) query = query.eq('lab_id', req.query.labId);
+        if (req.query.search) query = query.ilike('test_name', `%${req.query.search}%`);
+        
         const { data: tests, error } = await query.order('test_name');
         if (error) throw error;
-        res.json({ success: true, tests });
-    } catch (error) { res.status(500).json({ error: 'Server error' }); }
+
+        // Check current requester's subscription status
+        const userSub = await getUserSubscription(req);
+
+        // Apply discount: Plus = 10% discount, Pro = 15% discount
+        let discountPercent = 0;
+        if (userSub === 'Plus') discountPercent = 10;
+        else if (userSub === 'Pro') discountPercent = 15;
+
+        const enrichedTests = tests.map(test => {
+            const originalPrice = parseFloat(test.price);
+            let discountedPrice = originalPrice;
+            if (discountPercent > 0) {
+                discountedPrice = Math.max(0, originalPrice * (1 - discountPercent / 100));
+            }
+            return {
+                ...test,
+                discount_percent: discountPercent,
+                discounted_price: Math.round(discountedPrice * 100) / 100, // round to 2 decimals
+                has_discount: discountPercent > 0
+            };
+        });
+
+        res.json({ success: true, tests: enrichedTests });
+    } catch (error) { 
+        console.error('getTests error:', error);
+        res.status(500).json({ error: 'Server error' }); 
+    }
 };
 
 exports.getMyLabTests = async (req, res) => {

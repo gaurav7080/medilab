@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getReports, createReport, getReport, downloadReport } = require('../controllers/reportController');
+const { getReports, createReport, getReport, downloadReport, getAiSummary } = require('../controllers/reportController');
 const { protect, requireAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 // GET /api/reports — Get reports for current user
 router.get('/', protect, getReports);
+
+// GET /api/reports/:id/ai-summary — Get AI-analyzed smart summary
+router.get('/:id/ai-summary', protect, getAiSummary);
 
 // GET /api/reports/:id — Get single report
 router.get('/:id', protect, getReport);

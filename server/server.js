@@ -26,6 +26,7 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/family', require('./routes/family'));
+app.use('/api/subscription', require('./routes/subscription'));
 
 // ─── Health Check ────────────────────────────────────────
 app.get('/api/health', (req, res) => {
