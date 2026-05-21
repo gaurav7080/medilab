@@ -6,7 +6,7 @@ function initGlobalLoader() {
     if (document.getElementById('globalLoader')) return;
     const loaderHTML = `
         <div id="globalLoader" class="global-loader">
-            <div class="loader-spinner"></div>
+            <div class="loader-spinner"></div>q
             <div class="loader-text">LOADING...</div>
         </div>
     `;
@@ -95,14 +95,33 @@ function botTalk(query) {
     }, 1000);
 }
 
-function initHealthMetrics() {
+let healthTrendChartInstance = null;
+let currentTrendData = null;
+
+async function initHealthMetrics() {
     const container = document.getElementById('healthMetricsContainer');
     if (!container) return;
 
+    // Fetch dynamic trends and statistics
+    try {
+        const trendResponse = await apiCall('/dashboard/trends');
+        if (trendResponse && trendResponse.success) {
+            currentTrendData = trendResponse.trends;
+        }
+    } catch (err) {
+        console.error('Failed to load health trends:', err);
+    }
+
+    // Populate current health metrics snapshot based on the latest data point from trends or fallback
+    const hasData = currentTrendData && currentTrendData.sugar && currentTrendData.sugar.length > 0;
+    const latestSugar = hasData ? currentTrendData.sugar[currentTrendData.sugar.length - 1] : 98;
+    const latestCholesterol = hasData ? currentTrendData.cholesterol[currentTrendData.cholesterol.length - 1] : 192;
+    const latestHemoglobin = hasData ? currentTrendData.hemoglobin[currentTrendData.hemoglobin.length - 1] : 14.0;
+
     const metrics = [
-        { label: 'Blood Sugar', value: '98', unit: 'mg/dL', progress: 75, color: '#00f2fe' },
-        { label: 'Heart Rate', value: '72', unit: 'BPM', progress: 65, color: '#ff3366' },
-        { label: 'BMI Index', value: '22.4', unit: '', progress: 45, color: '#00c6ff' }
+        { label: 'Blood Sugar', value: latestSugar, unit: 'mg/dL', progress: Math.min(100, Math.round((latestSugar / 150) * 100)), color: '#00f2fe' },
+        { label: 'Total Cholesterol', value: latestCholesterol, unit: 'mg/dL', progress: Math.min(100, Math.round((latestCholesterol / 300) * 100)), color: '#00c6ff' },
+        { label: 'Hemoglobin', value: latestHemoglobin, unit: 'g/dL', progress: Math.min(100, Math.round((latestHemoglobin / 18) * 100)), color: '#ff3366' }
     ];
 
     container.innerHTML = metrics.map(m => `
@@ -116,6 +135,148 @@ function initHealthMetrics() {
             </div>
         </div>
     `).join('');
+
+    // Now, render the glowing Chart.js line chart
+    renderTrendChart('sugar');
+}
+
+function renderTrendChart(metricType) {
+    const ctx = document.getElementById('healthTrendChart');
+    if (!ctx) return;
+
+    if (!currentTrendData) {
+        // Fallback demo data if not loaded
+        currentTrendData = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            sugar: [110, 105, 98, 115, 96, 98],
+            cholesterol: [210, 205, 195, 200, 188, 192],
+            hemoglobin: [12.5, 13.0, 13.5, 12.8, 14.2, 14.0]
+        };
+    }
+
+    let dataPoints = [];
+    let label = '';
+    let borderColor = '#00f2fe';
+    let gradientStart = 'rgba(0, 242, 254, 0.45)';
+    let gradientEnd = 'rgba(0, 242, 254, 0.02)';
+    let unit = '';
+
+    if (metricType === 'sugar') {
+        dataPoints = currentTrendData.sugar;
+        label = 'Blood Sugar';
+        borderColor = '#00f2fe';
+        gradientStart = 'rgba(0, 242, 254, 0.45)';
+        gradientEnd = 'rgba(0, 242, 254, 0.02)';
+        unit = ' mg/dL';
+    } else if (metricType === 'cholesterol') {
+        dataPoints = currentTrendData.cholesterol;
+        label = 'Total Cholesterol';
+        borderColor = '#00c6ff';
+        gradientStart = 'rgba(0, 198, 255, 0.45)';
+        gradientEnd = 'rgba(0, 198, 255, 0.02)';
+        unit = ' mg/dL';
+    } else if (metricType === 'hemoglobin') {
+        dataPoints = currentTrendData.hemoglobin;
+        label = 'Hemoglobin';
+        borderColor = '#ff3366';
+        gradientStart = 'rgba(255, 51, 102, 0.45)';
+        gradientEnd = 'rgba(255, 51, 102, 0.02)';
+        unit = ' g/dL';
+    }
+
+    if (healthTrendChartInstance) {
+        healthTrendChartInstance.destroy();
+    }
+
+    // Create a beautiful, premium neon glowing gradient
+    const canvasContext = ctx.getContext('2d');
+    const gradient = canvasContext.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, gradientStart);
+    gradient.addColorStop(1, gradientEnd);
+
+    healthTrendChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: currentTrendData.labels,
+            datasets: [{
+                label: label,
+                data: dataPoints,
+                borderColor: borderColor,
+                borderWidth: 3,
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: borderColor,
+                pointBorderColor: '#0b1324',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: borderColor,
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(11, 19, 36, 0.95)',
+                    titleFont: { family: 'Rajdhani', size: 14, weight: 'bold' },
+                    bodyFont: { family: 'Inter', size: 13 },
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    displayColors: false,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.raw}${unit}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: { family: 'Inter', size: 12 }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: { family: 'Inter', size: 12 }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function switchChartMetric(metricType) {
+    renderTrendChart(metricType);
+
+    // Update active button classes in bootstrap group
+    const selector = document.getElementById('chartMetricSelector');
+    if (selector) {
+        selector.querySelectorAll('.btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+    }
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
 }
 
 function showLoader(text = 'LOADING...') {
@@ -524,8 +685,12 @@ async function loadReports() {
             tableBody.innerHTML += `<tr>
                 <td>${String(rid).slice(-6)}</td><td>${patName}</td>
                 <td>${testName}</td><td>${labName}</td>
-                <td><button class="btn btn-sm btn-primary" onclick="viewReport('${rid}')"><i class="fas fa-eye"></i> View</button>
-                ${(r.filePath || r.file_path) ? `<a href="/api/reports/${rid}/download" class="btn btn-sm btn-success ml-1"><i class="fas fa-download"></i></a>` : ''}</td></tr>`;
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="viewReport('${rid}')"><i class="fas fa-eye"></i> View</button>
+                    <button class="btn btn-sm btn-info ml-1" onclick="viewAISummary('${rid}')"><i class="fas fa-robot"></i> AI Summary</button>
+                    ${(r.filePath || r.file_path) ? `<a href="/api/reports/${rid}/download" class="btn btn-sm btn-success ml-1"><i class="fas fa-download"></i></a>` : ''}
+                </td>
+            </tr>`;
         });
     } catch (err) { showAlert(err.message, 'danger'); }
 }
@@ -537,6 +702,63 @@ async function viewReport(reportId) {
         const r = data.report;
         alert(`Report\n\nTest: ${r.bookingId?.testName || 'N/A'}\nResults: ${r.results || 'See attached file'}\nNotes: ${r.notes || 'None'}`);
     } catch (err) { showAlert(err.message, 'danger'); }
+}
+
+async function viewAISummary(reportId) {
+    showLoader('AI IS ANALYZING REPORT VALUES...');
+    try {
+        const data = await apiCall(`/reports/${reportId}/ai-summary`);
+        if (!data || !data.success) throw new Error('Failed to load AI summary');
+        const s = data.summary;
+
+        const container = document.getElementById('aiSummaryContent');
+        if (container) {
+            container.innerHTML = `
+                <!-- Dynamic Overview -->
+                <div class="mb-4 p-3" style="background: rgba(0, 242, 254, 0.05); border-left: 4px solid #00f2fe; border-radius: 6px;">
+                    <h6 class="text-primary font-weight-bold mb-2" style="font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; letter-spacing: 0.5px;"><i class="fas fa-info-circle"></i> AI Medical Overview</h6>
+                    <p class="mb-0 text-white" style="line-height: 1.6; font-size: 0.95rem;">${s.overview}</p>
+                </div>
+
+                <!-- Flagged Values -->
+                <div class="mb-4">
+                    <h6 class="text-danger font-weight-bold mb-3" style="font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; letter-spacing: 0.5px;"><i class="fas fa-exclamation-triangle"></i> Flagged Values & Markers</h6>
+                    <ul class="list-group list-group-flush" style="background: transparent;">
+                        ${s.flagged.map(f => `
+                            <li class="list-group-item px-0 py-2 d-flex align-items-start" style="background: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #fff; font-size: 0.92rem;">
+                                <i class="fas fa-exclamation-circle text-danger mt-1 mr-3" style="font-size: 0.95rem;"></i>
+                                <span style="line-height: 1.4;">${f}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <!-- Friendly Recommendations -->
+                <div class="mb-4">
+                    <h6 class="text-success font-weight-bold mb-3" style="font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; letter-spacing: 0.5px;"><i class="fas fa-heartbeat"></i> Health Recommendations</h6>
+                    <ul class="list-group list-group-flush" style="background: transparent;">
+                        ${s.recommendations.map(re => `
+                            <li class="list-group-item px-0 py-2 d-flex align-items-start" style="background: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #fff; font-size: 0.92rem;">
+                                <i class="fas fa-check-circle text-success mt-1 mr-3" style="font-size: 0.95rem;"></i>
+                                <span style="line-height: 1.4;">${re}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <!-- Recommended Consultations -->
+                <div class="p-3" style="background: rgba(255, 51, 102, 0.05); border-left: 4px solid #ff3366; border-radius: 6px;">
+                    <h6 class="text-danger font-weight-bold mb-2" style="color: #ff3366 !important; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; letter-spacing: 0.5px;"><i class="fas fa-user-md"></i> Suggested Consultation</h6>
+                    <p class="mb-0 text-white" style="line-height: 1.6; font-size: 0.95rem;">${s.consultation}</p>
+                </div>
+            `;
+            $('#aiSummaryModal').modal('show');
+        }
+    } catch (err) {
+        showAlert(err.message, 'danger');
+    } finally {
+        hideLoader();
+    }
 }
 
 // ─── Upload Report ───────────────────────────────────────
@@ -1055,8 +1277,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (window.location.pathname.includes('profile.html') || window.location.pathname.includes('subscription.html')) {
-        if (window.location.pathname.includes('profile.html')) loadProfilePageData();
-        loadSubscriptionPlans();
+        if (window.location.pathname.includes('profile.html')) {
+            loadProfilePageData();
+            loadSubscriptionPlans();
+        } else {
+            loadSubscriptionPageDetails();
+        }
     }
 
     if (window.location.pathname.includes('book-test.html')) {
@@ -1230,7 +1456,116 @@ function updateTestStats(tests) {
     }
 }
 
-// ─── Subscription Plans (Role-Based) ────────────────────────
+// ─── Subscription Plans & Razorpay Integration ────────────────
+let activeDiscountPercent = 0;
+let activeDiscountFlat = 0;
+let appliedCouponCode = '';
+
+// Load subscription details & history on page load
+async function loadSubscriptionPageDetails() {
+    if (!window.location.pathname.includes('subscription.html')) return;
+    
+    const user = SessionManager.getUser();
+    if (!user) return;
+
+    // 1. Fetch current subscription status from backend
+    try {
+        const res = await apiCall('/subscription/current');
+        if (res && res.success && res.subscription) {
+            const sub = res.subscription;
+            const badge = document.getElementById('currentPlanBadge');
+            const expiry = document.getElementById('subExpiry');
+            const expiryDate = document.getElementById('subExpiryDate');
+            const cancelBtn = document.getElementById('cancelSubBtn');
+
+            if (badge) {
+                badge.className = `sub-plan-badge ${sub.plan.toLowerCase()}`;
+                badge.innerHTML = `<i class="fas ${sub.plan === 'Pro' || sub.plan === 'Enterprise' ? 'fa-crown text-warning' : 'fa-leaf'}"></i> ${sub.plan}`;
+            }
+
+            if (expiry && sub.end_date) {
+                expiry.style.display = 'inline-flex';
+                if (expiryDate) {
+                    const formattedDate = new Date(sub.end_date).toLocaleDateString('en-IN', {
+                        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    expiryDate.innerText = formattedDate;
+                }
+            } else if (expiry) {
+                expiry.style.display = 'none';
+            }
+
+            if (cancelBtn && sub.plan !== 'Basic' && sub.plan !== 'Standard') {
+                cancelBtn.style.display = 'inline-block';
+            } else if (cancelBtn) {
+                cancelBtn.style.display = 'none';
+            }
+
+            // Sync with local session
+            if (user.subscription !== sub.plan) {
+                user.subscription = sub.plan;
+                SessionManager.setUser(user);
+                loadNavbarProfile();
+                loadSidebar();
+            }
+        }
+    } catch (err) {
+        console.error('Error fetching subscription details:', err);
+    }
+
+    // 2. Load payment history
+    loadPaymentHistory();
+
+    // 3. Load pricing plans
+    loadSubscriptionPlans();
+}
+
+async function loadPaymentHistory() {
+    const body = document.getElementById('paymentHistoryBody');
+    if (!body) return;
+
+    try {
+        const res = await apiCall('/subscription/history');
+        if (res && res.success && res.payments) {
+            const payments = res.payments;
+            if (payments.length === 0) {
+                body.innerHTML = `
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-history mr-2"></i> No transaction history found
+                    </div>
+                `;
+                return;
+            }
+
+            body.innerHTML = payments.map(p => {
+                const date = new Date(p.created_at).toLocaleDateString('en-IN', {
+                    day: 'numeric', month: 'short', year: 'numeric'
+                });
+                const amount = parseFloat(p.amount).toFixed(2);
+                const statusBadge = `<span class="payment-status ${p.status}">${p.status.toUpperCase()}</span>`;
+                const planName = p.subscriptions?.plan || 'Upgrade';
+                const method = p.method === 'demo' ? 'Simulated Card' : (p.method ? p.method.toUpperCase() : 'Razorpay');
+
+                return `
+                    <div class="payment-row">
+                        <div>
+                            <div class="font-weight-bold text-white">${planName} Subscription</div>
+                            <small class="text-muted">${date} • Method: ${method} • ID: ${p.razorpay_payment_id || 'N/A'}</small>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-weight-bold text-primary">₹${amount}</div>
+                            <div class="mt-1">${statusBadge}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (err) {
+        console.error('Error loading payment history:', err);
+        body.innerHTML = `<div class="text-center py-4 text-danger"><i class="fas fa-exclamation-triangle"></i> Failed to load history</div>`;
+    }
+}
+
 function loadSubscriptionPlans() {
     const container = document.getElementById('subscriptionPlansContainer');
     if (!container) return;
@@ -1239,11 +1574,12 @@ function loadSubscriptionPlans() {
     if (!user) return;
 
     const isPatient = user.role === 'Patient';
+    const currentSub = user.subscription || 'Basic';
 
     const plans = isPatient ? [
         {
             name: "Basic",
-            price: "Free",
+            price: 0,
             icon: "fas fa-leaf",
             features: [
                 "Online test booking",
@@ -1257,7 +1593,7 @@ function loadSubscriptionPlans() {
         },
         {
             name: "Plus",
-            price: "₹199",
+            price: 199,
             period: "/mo",
             icon: "fas fa-shield-alt",
             features: [
@@ -1273,7 +1609,7 @@ function loadSubscriptionPlans() {
         },
         {
             name: "Pro",
-            price: "₹499",
+            price: 499,
             period: "/mo",
             icon: "fas fa-crown",
             features: [
@@ -1290,7 +1626,7 @@ function loadSubscriptionPlans() {
     ] : [
         {
             name: "Standard",
-            price: "Free",
+            price: 0,
             icon: "fas fa-hospital",
             features: [
                 "Standard dashboard",
@@ -1304,7 +1640,7 @@ function loadSubscriptionPlans() {
         },
         {
             name: "Plus",
-            price: "₹999",
+            price: 999,
             period: "/mo",
             icon: "fas fa-rocket",
             features: [
@@ -1320,7 +1656,7 @@ function loadSubscriptionPlans() {
         },
         {
             name: "Enterprise",
-            price: "₹2499",
+            price: 2499,
             period: "/mo",
             icon: "fas fa-vial",
             features: [
@@ -1336,20 +1672,295 @@ function loadSubscriptionPlans() {
         }
     ];
 
-    container.innerHTML = plans.map(plan => `
-        <div class="pricing-card ${plan.popular ? 'popular' : ''}">
-            ${plan.popular ? '<div class="popular-badge">Best Value</div>' : ''}
-            <div class="plan-icon">
-                <i class="${plan.icon}"></i>
+    container.innerHTML = plans.map(plan => {
+        const isCurrent = plan.name.toLowerCase() === currentSub.toLowerCase() || 
+                          (plan.name === 'Standard' && currentSub === 'Basic') || 
+                          (plan.name === 'Basic' && currentSub === 'Standard');
+        
+        let finalPriceText = plan.price === 0 ? "Free" : `₹${plan.price}`;
+        let discountBadge = '';
+
+        if (plan.price > 0 && (activeDiscountPercent > 0 || activeDiscountFlat > 0)) {
+            let finalPrice = plan.price;
+            if (activeDiscountPercent > 0) {
+                finalPrice = Math.max(0, plan.price * (1 - activeDiscountPercent / 100));
+                discountBadge = `<span class="badge badge-success ml-2">-${activeDiscountPercent}% OFF</span>`;
+            } else if (activeDiscountFlat > 0) {
+                finalPrice = Math.max(0, plan.price - activeDiscountFlat);
+                discountBadge = `<span class="badge badge-success ml-2">-₹${activeDiscountFlat} OFF</span>`;
+            }
+            finalPriceText = `<span style="text-decoration: line-through; opacity: 0.5; font-size: 1.2rem; margin-right: 8px;">₹${plan.price}</span>₹${Math.round(finalPrice)}`;
+        }
+
+        return `
+            <div class="pricing-card ${plan.popular ? 'popular' : ''} ${isCurrent ? 'active-plan' : ''}">
+                ${plan.popular ? '<div class="popular-badge">Best Value</div>' : ''}
+                ${isCurrent ? '<div class="active-badge" style="position: absolute; top: 12px; left: 12px; background: #00f2fe; color: #000; font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 20px; font-family: \'Rajdhani\', sans-serif;">ACTIVE PLAN</div>' : ''}
+                <div class="plan-icon">
+                    <i class="${plan.icon}"></i>
+                </div>
+                <h4 class="plan-name">${plan.name}</h4>
+                <div class="plan-price">${finalPriceText}${plan.period || ''} ${discountBadge}</div>
+                <ul class="plan-features">
+                    ${plan.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+                </ul>
+                <button class="btn btn-plan ${isCurrent ? 'btn-outline-secondary disabled' : plan.btnClass}" 
+                        ${isCurrent ? 'disabled' : ''} 
+                        onclick="purchaseSubscription('${plan.name}')">
+                    ${isCurrent ? 'Your Active Plan' : plan.btnText}
+                </button>
             </div>
-            <h4 class="plan-name">${plan.name}</h4>
-            <div class="plan-price">${plan.price}${plan.period || ''}</div>
-            <ul class="plan-features">
-                ${plan.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
-            </ul>
-            <button class="btn btn-plan ${plan.btnClass}">${plan.btnText}</button>
+        `;
+    }).join('');
+}
+
+// Purchase / checkout process using Razorpay
+async function purchaseSubscription(planName) {
+    if (planName === 'Basic' || planName === 'Standard') return;
+
+    const overlay = document.getElementById('paymentProcessing');
+    const text = document.getElementById('processingText');
+    
+    if (overlay) {
+        if (text) text.innerText = "INITIATING TRANSACTION...";
+        overlay.classList.add('active');
+    }
+
+    try {
+        // Create the order on backend
+        const orderData = await apiCall('/subscription/create-order', {
+            method: 'POST',
+            body: JSON.stringify({ plan: planName, couponCode: appliedCouponCode })
+        });
+
+        if (!orderData || !orderData.success) {
+            throw new Error(orderData.error || 'Failed to initiate order');
+        }
+
+        if (overlay) overlay.classList.remove('active');
+
+        // Handle Demo Mode Fallback vs. Real Razorpay
+        if (orderData.demo_mode) {
+            // Trigger beautiful simulated payment overlay
+            triggerDemoPayment(orderData, planName);
+        } else {
+            // Configure and open live Razorpay checkout iframe
+            const options = {
+                key: orderData.key,
+                amount: orderData.order.amount,
+                currency: orderData.order.currency,
+                name: 'MediLab Diagnostics',
+                description: `${planName} Subscription Upgrade`,
+                order_id: orderData.order.id,
+                prefill: {
+                    name: SessionManager.getUser().name,
+                    email: SessionManager.getUser().email,
+                },
+                theme: { color: '#00f2fe' },
+                handler: async function (response) {
+                    if (overlay) {
+                        if (text) text.innerText = "VERIFYING TRANSACTION...";
+                        overlay.classList.add('active');
+                    }
+
+                    try {
+                        const verifyRes = await apiCall('/subscription/verify-payment', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                plan: planName
+                            })
+                        });
+
+                        if (verifyRes && verifyRes.success) {
+                            showSuccessNotification(planName, verifyRes.user);
+                        } else {
+                            throw new Error(verifyRes.error || 'Signature verification failed');
+                        }
+                    } catch (err) {
+                        showAlert(err.message || 'Payment verification failed', 'danger');
+                    } finally {
+                        if (overlay) overlay.classList.remove('active');
+                    }
+                },
+                modal: {
+                    ondismiss: function () {
+                        toast('Payment cancelled by user', 'info');
+                    }
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+    } catch (err) {
+        console.error('Purchase error:', err);
+        showAlert(err.message || 'Failed to initiate checkout', 'danger');
+        if (overlay) overlay.classList.remove('active');
+    }
+}
+
+// Simulated Payment for Demo Mode when Razorpay keys are not configured
+function triggerDemoPayment(orderData, planName) {
+    const overlay = document.getElementById('paymentProcessing');
+    const text = document.getElementById('processingText');
+
+    // Create a beautiful popup for Simulated Payment
+    const modalHtml = `
+        <div class="modal fade" id="demoPaymentModal" tabindex="-1" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content card-holographic" style="background: rgba(11, 19, 36, 0.95); border: 1.5px solid rgba(0, 242, 254, 0.3); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 242, 254, 0.2);">
+                    <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                        <h5 class="modal-title text-primary"><i class="fas fa-flask text-success mr-2"></i> MediLab Pay (Demo Mode)</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="background: transparent; border: none; font-size: 1.5rem;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <div class="mb-4">
+                            <span class="text-muted small">Subscription Plan</span>
+                            <h4 class="text-white font-weight-bold">${planName} Tier</h4>
+                            <span class="text-muted small">Amount Due</span>
+                            <h3 class="text-primary font-weight-bold">₹${orderData.order.amount / 100}</h3>
+                        </div>
+                        
+                        <p class="small text-muted">Razorpay credentials are not set in the .env file. The system is running in simulated Sandbox mode. Click below to complete payment.</p>
+                        
+                        <button class="btn btn-primary btn-block py-2.5 font-weight-bold mt-4" onclick="confirmDemoPayment('${orderData.order.id}', '${planName}')">
+                            <i class="fas fa-check-circle mr-2"></i> Complete Simulated Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-    `).join('');
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    $('#demoPaymentModal').modal('show');
+    $('#demoPaymentModal').on('hidden.bs.modal', function () {
+        $(this).remove();
+    });
+}
+
+async function confirmDemoPayment(orderId, planName) {
+    $('#demoPaymentModal').modal('hide');
+    const overlay = document.getElementById('paymentProcessing');
+    const text = document.getElementById('processingText');
+
+    if (overlay) {
+        if (text) text.innerText = "VERIFYING SIMULATED TRANSACTION...";
+        overlay.classList.add('active');
+    }
+
+    try {
+        const verifyRes = await apiCall('/subscription/verify-payment', {
+            method: 'POST',
+            body: JSON.stringify({
+                razorpay_order_id: orderId,
+                demo_mode: true,
+                plan: planName
+            })
+        });
+
+        if (verifyRes && verifyRes.success) {
+            showSuccessNotification(planName, verifyRes.user);
+        } else {
+            throw new Error(verifyRes.error || 'Verification failed');
+        }
+    } catch (err) {
+        showAlert(err.message || 'Demo payment failed', 'danger');
+    } finally {
+        if (overlay) overlay.classList.remove('active');
+    }
+}
+
+// Success Animation and State Update
+function showSuccessNotification(planName, updatedUser) {
+    // Save updated user to localstorage
+    SessionManager.setUser(updatedUser);
+    
+    // Refresh header / profiles
+    loadNavbarProfile();
+    loadSidebar();
+
+    // Trigger Success Overlay
+    const successOverlay = document.getElementById('paymentSuccess');
+    const text = document.getElementById('successPlanText');
+    
+    if (successOverlay) {
+        if (text) text.innerText = `Welcome to ${planName}!`;
+        successOverlay.classList.add('active');
+
+        setTimeout(() => {
+            successOverlay.classList.remove('active');
+            // Refresh subscription page elements
+            loadSubscriptionPageDetails();
+        }, 3000);
+    } else {
+        showAlert(`✓ Subscription upgraded successfully! Welcome to ${planName}.`, 'success');
+        loadSubscriptionPageDetails();
+    }
+}
+
+// Apply Coupon validation
+async function applyCoupon() {
+    const input = document.getElementById('couponCodeInput');
+    const message = document.getElementById('couponMessage');
+    if (!input || !message) return;
+
+    const code = input.value.trim().toUpperCase();
+    if (!code) {
+        toast('Please enter a coupon code', 'warning');
+        return;
+    }
+
+    // Standard client side mock verification of seeded coupon codes
+    if (code === 'WELCOME50') {
+        activeDiscountPercent = 50;
+        activeDiscountFlat = 0;
+        appliedCouponCode = code;
+        message.style.display = 'block';
+        message.className = 'small mt-2 text-success';
+        message.innerHTML = '<i class="fas fa-check-circle"></i> Coupon applied: 50% discount on all plans!';
+    } else if (code === 'MEDILAB100') {
+        activeDiscountPercent = 0;
+        activeDiscountFlat = 100;
+        appliedCouponCode = code;
+        message.style.display = 'block';
+        message.className = 'small mt-2 text-success';
+        message.innerHTML = '<i class="fas fa-check-circle"></i> Coupon applied: ₹100 off on all plans!';
+    } else {
+        message.style.display = 'block';
+        message.className = 'small mt-2 text-danger';
+        message.innerHTML = '<i class="fas fa-times-circle"></i> Invalid or expired coupon code';
+        activeDiscountPercent = 0;
+        activeDiscountFlat = 0;
+        appliedCouponCode = '';
+    }
+
+    loadSubscriptionPlans();
+}
+
+// Cancel Current Active Subscription
+async function cancelCurrentSubscription() {
+    if (!confirm('Are you sure you want to cancel your current subscription? Your benefits will be removed.')) return;
+
+    showLoader('CANCELLING SUBSCRIPTION...');
+    try {
+        const res = await apiCall('/subscription/cancel', { method: 'POST' });
+        if (res && res.success) {
+            showAlert('✓ Subscription cancelled successfully.', 'success');
+            SessionManager.setUser(res.user);
+            loadSubscriptionPageDetails();
+        }
+    } catch (err) {
+        showAlert(err.message || 'Failed to cancel subscription', 'danger');
+    } finally {
+        hideLoader();
+    }
 }
 
 // ─── Featured Labs & Recommendations ───────────────────────
@@ -1361,19 +1972,33 @@ async function loadFeaturedLabs() {
         const data = await apiCall('/labs');
         const labs = data.labs || [];
 
-        // Filter "Featured" labs (Simulating premium status)
-        const featured = labs.slice(0, 3); // Take first 3 as featured for demo
+        // Show recommended labs (prioritize those with active subscriptions)
+        // Take top 3 verified labs (since server already sorts premium labs first)
+        const recommendedLabs = labs.slice(0, 3);
 
-        list.innerHTML = featured.map(lab => `
-            <div class="col-4">
-                <div class="featured-lab-card" onclick="selectRecommendedLab('${lab.id}', '${lab.name}')">
-                    <i class="fas fa-hospital"></i>
-                    <span>${lab.name}</span>
-                    <div class="badge mt-2">Recommended</div>
+        list.innerHTML = recommendedLabs.map(lab => {
+            const premiumBadge = lab.is_premium
+                ? `<div class="badge mt-2 premium-badge" style="background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); font-weight: 700; padding: 4px 8px; border-radius: 4px;">
+                     <i class="fas fa-crown mr-1"></i> Recommended
+                   </div>`
+                : `<div class="badge mt-2" style="background: rgba(0, 242, 254, 0.1); color: #00f2fe; padding: 4px 8px; border-radius: 4px;">Partner Lab</div>`;
+
+            return `
+                <div class="col-md-4 mb-3">
+                    <div class="featured-lab-card ${lab.is_premium ? 'featured-premium' : ''}" 
+                         onclick="selectRecommendedLab('${lab.id}', '${lab.name}')" 
+                         style="cursor: pointer; border: 1px solid ${lab.is_premium ? 'rgba(255,193,7,0.3)' : 'rgba(255,255,255,0.05)'}; padding: 18px; border-radius: 12px; background: rgba(255,255,255,0.02); transition: all 0.3s ease;">
+                        <i class="fas fa-hospital-alt fa-2x ${lab.is_premium ? 'text-warning' : 'text-primary'} mb-2"></i>
+                        <h6 class="text-white mb-1 font-weight-bold">${lab.name}</h6>
+                        <small class="text-muted d-block"><i class="fas fa-map-marker-alt mr-1"></i>${lab.location || 'Online'}</small>
+                        ${premiumBadge}
+                    </div>
                 </div>
-            </div>
-        `).join('');
-    } catch (err) { console.error('Featured labs error:', err); }
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Featured labs error:', err);
+    }
 }
 
 function selectRecommendedLab(id, name) {
@@ -1399,41 +2024,87 @@ async function comparePrices() {
     clearTimeout(comparisonTimeout);
     comparisonTimeout = setTimeout(async () => {
         try {
-            // In a real app, we would search across all labs. 
-            // For now, we simulate by fetching all labs and showing sample prices.
-            const data = await apiCall('/labs');
-            const labs = data.labs || [];
+            // Fetch real matching tests from database in real-time
+            const data = await apiCall(`/tests?search=${encodeURIComponent(query)}`);
+            const tests = data.tests || [];
 
-            if (labs.length === 0) return;
+            if (tests.length === 0) {
+                if (tool) tool.style.display = 'block';
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-3 text-muted">
+                            <i class="fas fa-search mr-2"></i> No matching tests found in database
+                        </div>
+                    `;
+                }
+                return;
+            }
 
             if (tool) tool.style.display = 'block';
 
-            // Generate some dynamic mock prices based on test name length and lab name
-            const results = labs.map(lab => {
-                const basePrice = 500 + (query.length * 20);
-                const variance = (lab.name.length % 5) * 50;
-                return {
-                    name: lab.name,
-                    price: basePrice + variance,
-                    id: lab.id
-                };
-            }).sort((a, b) => a.price - b.price);
+            // Sort tests by dynamic price / discounted price (cheapest first)
+            const sortedResults = tests.sort((a, b) => {
+                const priceA = a.has_discount ? a.discounted_price : parseFloat(a.price);
+                const priceB = b.has_discount ? b.discounted_price : parseFloat(b.price);
+                return priceA - priceB;
+            });
 
-            const minPrice = results.length > 0 ? results[0].price : 0;
+            const user = SessionManager.getUser() || {};
+            const userSub = user.subscription || 'Basic';
+            const hasSub = userSub === 'Plus' || userSub === 'Pro';
 
             if (container) {
-                container.innerHTML = results.slice(0, 4).map(res => `
-                    <div class="comparison-item ${res.price === minPrice ? 'cheapest' : ''}" onclick="selectRecommendedLab('${res.id}', '${res.name}')" style="cursor:pointer">
-                        <div class="lab-name">
-                            ${res.name}
-                            ${res.price === minPrice ? '<span class="badge badge-success ml-2">Best Price</span>' : ''}
+                container.innerHTML = sortedResults.map((test, index) => {
+                    const labName = test.labs?.name || 'Partner Lab';
+                    const originalPrice = parseFloat(test.price);
+                    
+                    let priceHtml = '';
+                    let badgeHtml = '';
+
+                    if (test.has_discount) {
+                        // User has active subscription (Best value highlighted)
+                        priceHtml = `
+                            <div class="lab-price text-right">
+                                <span style="text-decoration: line-through; opacity: 0.5; font-size: 0.8rem; margin-right: 6px; color:#fff;">₹${originalPrice}</span>
+                                <span class="text-warning font-weight-bold" style="font-size: 1.1rem;">₹${test.discounted_price}</span>
+                            </div>
+                        `;
+                        badgeHtml = `<span class="badge badge-warning ml-2" style="font-size:0.7rem;"><i class="fas fa-crown"></i> Subscriber Best Value (-${test.discount_percent}%)</span>`;
+                    } else {
+                        // User has basic plan (Show standard price and invite to upgrade for discount)
+                        const promoPrice = Math.round(originalPrice * 0.85); // show simulated 15% discount for Pro
+                        priceHtml = `
+                            <div class="lab-price text-right">
+                                <span class="text-primary font-weight-bold" style="font-size: 1.1rem;">₹${originalPrice}</span>
+                            </div>
+                        `;
+                        badgeHtml = `<span class="badge badge-outline-success ml-2" style="font-size:0.7rem; border:1.5px dashed rgba(40,167,69,0.5); color:#28a745;" onclick="window.location.href='subscription.html'; event.stopPropagation();">Unlock ₹${promoPrice} with Pro</span>`;
+                    }
+
+                    if (index === 0) {
+                        badgeHtml += `<span class="badge badge-success ml-2">Cheapest</span>`;
+                    }
+
+                    return `
+                        <div class="comparison-item d-flex justify-content-between align-items-center p-3 mb-2" 
+                             onclick="selectRecommendedLab('${test.lab_id}', '${labName}')" 
+                             style="cursor:pointer; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; transition: all 0.2s ease;">
+                            <div>
+                                <div class="lab-name text-white font-weight-bold">
+                                    ${labName}
+                                    ${badgeHtml}
+                                </div>
+                                <small class="text-muted d-block">${test.test_name} (${test.category || 'General'}) • TAT: ${test.turnaround_time || '24 hrs'}</small>
+                            </div>
+                            ${priceHtml}
                         </div>
-                        <div class="lab-price">₹${res.price}</div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
-        } catch (err) { console.error('Comparison error:', err); }
+        } catch (err) { 
+            console.error('Comparison error:', err); 
+        }
     }, 500);
 }
 

@@ -7,6 +7,199 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* ── Subscription Page Specific Styles ── */
+        .sub-status-card {
+            background: linear-gradient(135deg, rgba(0,242,254,0.08) 0%, rgba(0,198,255,0.04) 100%);
+            border: 1.5px solid rgba(0,242,254,0.2);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-status-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0,242,254,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .sub-plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .sub-plan-badge.basic { background: rgba(108,117,125,0.2); color: #adb5bd; }
+        .sub-plan-badge.plus { background: rgba(0,242,254,0.15); color: #00f2fe; }
+        .sub-plan-badge.pro { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .sub-plan-badge.enterprise { background: rgba(255,51,102,0.15); color: #ff3366; }
+        .sub-plan-badge.standard { background: rgba(108,117,125,0.2); color: #adb5bd; }
+
+        .sub-expiry { font-size: 0.88rem; color: var(--text-muted); margin-top: 8px; }
+        .sub-expiry i { color: #ffc107; margin-right: 4px; }
+
+        .cancel-sub-btn {
+            background: transparent;
+            border: 1px solid rgba(255,51,102,0.4);
+            color: #ff3366;
+            border-radius: 8px;
+            padding: 6px 18px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .cancel-sub-btn:hover {
+            background: rgba(255,51,102,0.1);
+            border-color: #ff3366;
+        }
+
+        /* Payment History */
+        .payment-history-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            margin-bottom: 30px;
+        }
+        .payment-history-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 18px 22px;
+        }
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.2s ease;
+        }
+        .payment-row:hover { background: rgba(0,242,254,0.03); }
+        .payment-row:last-child { border-bottom: none; }
+        .payment-status {
+            font-size: 0.78rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        .payment-status.captured { background: rgba(40,167,69,0.15); color: #28a745; }
+        .payment-status.pending { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .payment-status.failed { background: rgba(255,51,102,0.15); color: #ff3366; }
+
+        /* Coupon Input */
+        .coupon-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .coupon-input-group input {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .coupon-input-group input::placeholder { color: rgba(255,255,255,0.3); }
+        .coupon-input-group button {
+            background: linear-gradient(135deg, #00f2fe, #00c6ff);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Processing overlay */
+        .payment-processing {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,11,18,0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .payment-processing.active { opacity: 1; pointer-events: all; }
+        .payment-processing .spinner {
+            width: 60px; height: 60px;
+            border: 3px solid rgba(0,242,254,0.15);
+            border-top-color: #00f2fe;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .payment-processing p {
+            margin-top: 20px;
+            color: #00f2fe;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Success Animation */
+        .payment-success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8,11,18,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .payment-success-overlay.active { opacity: 1; pointer-events: all; }
+        .success-checkmark {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: successPop 0.5s ease;
+            box-shadow: 0 0 40px rgba(40,167,69,0.4);
+        }
+        .success-checkmark i { font-size: 2.5rem; color: #fff; }
+        @keyframes successPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .success-text {
+            margin-top: 24px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .success-subtext {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+    </style>
 </head>
 <body class="theme-dark">
     <div class="d-flex">
@@ -19,56 +212,100 @@
                     </button>
                     <span class="navbar-brand mb-0 h1"><i class="fas fa-crown text-warning pulse-neon"></i> Subscription</span>
                 </div>
-                
                 <!-- Profile Dropdown -->
                 <div class="dropdown profile-dropdown">
                     <button class="btn btn-profile dropdown-toggle" type="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="https://ui-avatars.com/api/?name=User&background=00f2fe&color=000" alt="Profile" class="profile-avatar" id="navProfilePic">
                         <span class="profile-name" id="navProfileName">User</span>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow-lg profile-menu" aria-labelledby="profileMenuButton">
-                        <div class="dropdown-header d-flex align-items-center">
-                            <div class="header-avatar mr-3">
-                                <i class="fas fa-user-circle fa-2x text-primary"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 text-white" id="menuProfileName">User</h6>
-                                <small class="text-muted" id="menuProfileRole">Patient</small>
-                            </div>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="profile.html"><i class="fas fa-user-edit text-primary"></i> Edit Profile</a>
-                        <a class="dropdown-item" href="subscription.html"><i class="fas fa-crown text-warning"></i> Subscription / Pro</a>
-                        <a class="dropdown-item" href="family.html"><i class="fas fa-users text-info"></i> Family Members</a>
-                        <a class="dropdown-item" href="reports.html"><i class="fas fa-file-medical-alt text-danger"></i> Reports</a>
-                        <a class="dropdown-item" href="history.html"><i class="fas fa-history text-secondary"></i> Profile History</a>
-                        <a class="dropdown-item" href="settings.html"><i class="fas fa-cog text-light"></i> Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
+                    <div class="dropdown-menu dropdown-menu-right shadow-lg profile-menu" aria-labelledby="profileMenuButton"></div>
                 </div>
             </nav>
-            <div class="container-fluid mt-4">
+
+            <div class="container-fluid mt-4 px-md-4">
+                <!-- Current Subscription Status -->
+                <div class="sub-status-card" id="subStatusCard">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted small mb-2" style="letter-spacing: 1px; text-transform: uppercase;">Current Subscription</h6>
+                            <div class="d-flex align-items-center flex-wrap" style="gap: 12px;">
+                                <span class="sub-plan-badge basic" id="currentPlanBadge">
+                                    <i class="fas fa-leaf"></i> Basic
+                                </span>
+                                <span class="sub-expiry" id="subExpiry" style="display:none;">
+                                    <i class="fas fa-clock"></i> Expires: <span id="subExpiryDate">--</span>
+                                </span>
+                            </div>
+                        </div>
+                        <button class="cancel-sub-btn" id="cancelSubBtn" style="display:none;" onclick="cancelCurrentSubscription()">
+                            <i class="fas fa-times-circle mr-1"></i> Cancel Plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section Title -->
                 <div class="subscription-header text-center">
                     <h2 class="section-title"><i class="fas fa-crown text-warning pulse-neon"></i> Choose Your MediLab Plan</h2>
                     <p class="text-muted">Unlock the full power of smart diagnostics with our premium features tailored for you.</p>
                 </div>
+
+                <!-- Coupon Code -->
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-5">
+                        <div class="coupon-input-group">
+                            <input type="text" id="couponCodeInput" placeholder="Enter promo code (e.g. WELCOME50)">
+                            <button onclick="applyCoupon()"><i class="fas fa-tag mr-1"></i> Apply</button>
+                        </div>
+                        <div id="couponMessage" class="small mt-2" style="display:none;"></div>
+                    </div>
+                </div>
                 
-                <div id="subscriptionPlansContainer" class="pricing-grid pb-5">
-                    <!-- Plans injected by JS -->
+                <!-- Plans Grid -->
+                <div id="subscriptionPlansContainer" class="pricing-grid pb-4"></div>
+
+                <!-- Payment History -->
+                <div class="payment-history-card" id="paymentHistorySection">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-white" style="font-family: 'Rajdhani', sans-serif; font-weight: 700;">
+                            <i class="fas fa-receipt text-primary mr-2"></i> Payment History
+                        </h5>
+                    </div>
+                    <div id="paymentHistoryBody">
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-spinner fa-spin"></i> Loading transactions...
+                        </div>
+                    </div>
                 </div>
 
-                <div class="row justify-content-center mt-4 pb-5">
+                <!-- Security Badge -->
+                <div class="row justify-content-center mt-2 pb-5">
                     <div class="col-md-8 text-center">
                         <div class="card bg-dark-soft border-glass p-4">
                             <h5><i class="fas fa-shield-alt text-success"></i> Secure & Trusted</h5>
-                            <p class="small text-muted mb-0">All plans include end-to-end encryption for your medical data and 24/7 dedicated support. No hidden charges, cancel anytime.</p>
+                            <p class="small text-muted mb-0">All payments are processed through Razorpay's PCI-DSS compliant gateway with 256-bit encryption. No hidden charges, cancel anytime.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Payment Processing Overlay -->
+    <div class="payment-processing" id="paymentProcessing">
+        <div class="spinner"></div>
+        <p id="processingText">PROCESSING PAYMENT...</p>
+    </div>
+
+    <!-- Payment Success Overlay -->
+    <div class="payment-success-overlay" id="paymentSuccess">
+        <div class="success-checkmark"><i class="fas fa-check"></i></div>
+        <div class="success-text" id="successPlanText">Welcome to Pro!</div>
+        <div class="success-subtext">Your subscription has been activated successfully.</div>
+    </div>
+
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

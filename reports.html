@@ -74,6 +74,32 @@
             </div>
         </div>
     </div>
+
+    <!-- AI Smart Summary Modal -->
+    <div class="modal fade" id="aiSummaryModal" tabindex="-1" role="dialog" aria-labelledby="aiSummaryLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content card-holographic" style="background: rgba(11, 19, 36, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1.5px solid rgba(0, 242, 254, 0.25); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 242, 254, 0.2);">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding: 20px;">
+                    <h5 class="modal-title text-primary" id="aiSummaryLabel" style="font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 0.5px; display: flex; align-items: center;">
+                        <i class="fas fa-robot pulse-neon mr-2"></i> MediLab AI Smart Report Summary
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8; background: transparent; border: none; font-size: 1.5rem;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 25px; color: var(--text-main); max-height: 70vh; overflow-y: auto;">
+                    <div id="aiSummaryContent">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(0, 242, 254, 0.15); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;">
+                    <div class="small text-muted"><i class="fas fa-shield-alt text-success"></i> HIPAA Compliant Patient Summary</div>
+                    <button type="button" class="btn btn-outline-primary px-4" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <p>&copy; 2026 MediLab. All rights reserved.</p>
     </footer>

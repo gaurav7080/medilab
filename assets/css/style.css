@@ -1606,6 +1606,14 @@ option {
 .pricing-card.popular:hover {
     transform: translateY(-10px) scale(1.05);
 }
+.pricing-card.active-plan {
+    border: 2px solid #00f2fe !important;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.25) !important;
+    background: rgba(0, 242, 254, 0.03) !important;
+}
+.pricing-card.active-plan:hover {
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.35) !important;
+}
 .popular-badge {
     position: absolute;
     top: 15px;
@@ -1721,6 +1729,17 @@ option {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.featured-lab-card.featured-premium {
+    background: rgba(255, 193, 7, 0.03) !important;
+    border: 1px solid rgba(255, 193, 7, 0.25) !important;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.04);
+}
+.featured-lab-card.featured-premium:hover {
+    background: rgba(255, 193, 7, 0.08) !important;
+    border-color: rgba(255, 193, 7, 0.55) !important;
+    box-shadow: 0 5px 25px rgba(255, 193, 7, 0.22) !important;
+    transform: translateY(-5px);
 }
 .featured-lab-card .badge {
     font-size: 0.6rem;
