@@ -1271,6 +1271,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadSidebar();
     loadNavbarProfile();
     initializeMobileMenu();
+    renderMobileBottomNav();
 
     if (window.location.pathname.includes('family.html')) {
         loadFamilyMembers();
@@ -2106,6 +2107,72 @@ async function comparePrices() {
             console.error('Comparison error:', err); 
         }
     }, 500);
+}
+
+// ─── Render Mobile Bottom Navigation Bar ───────────────────
+function renderMobileBottomNav() {
+    const user = SessionManager.getUser();
+    if (!user) return;
+
+    if (document.querySelector('.mobile-bottom-nav')) return;
+
+    const nav = document.createElement('div');
+    nav.className = 'mobile-bottom-nav';
+
+    const isActive = (path) => window.location.pathname.includes(path) ? 'active' : '';
+
+    const patientNav = `
+        <a href="dashboard.html" class="mobile-nav-item ${isActive('dashboard.html')}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="bookings.html" class="mobile-nav-item ${isActive('bookings.html')}">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Bookings</span>
+        </a>
+        <a href="book-test.html" class="mobile-nav-item ${isActive('book-test.html')} fab-item">
+            <div class="mobile-nav-fab">
+                <i class="fas fa-plus"></i>
+            </div>
+            <span>Book Test</span>
+        </a>
+        <a href="reports.html" class="mobile-nav-item ${isActive('reports.html')}">
+            <i class="fas fa-file-medical-alt"></i>
+            <span>Reports</span>
+        </a>
+        <a href="profile.html" class="mobile-nav-item ${isActive('profile.html')}">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    `;
+
+    const adminNav = `
+        <a href="dashboard.html" class="mobile-nav-item ${isActive('dashboard.html')}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="bookings.html" class="mobile-nav-item ${isActive('bookings.html')}">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Orders</span>
+        </a>
+        <a href="upload-reports.html" class="mobile-nav-item ${isActive('upload-reports.html')} fab-item">
+            <div class="mobile-nav-fab admin-fab">
+                <i class="fas fa-upload"></i>
+            </div>
+            <span>Upload</span>
+        </a>
+        <a href="manage-tests.html" class="mobile-nav-item ${isActive('manage-tests.html')}">
+            <i class="fas fa-flask"></i>
+            <span>Catalog</span>
+        </a>
+        <a href="profile.html" class="mobile-nav-item ${isActive('profile.html')}">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    `;
+
+    nav.innerHTML = user.role === 'Admin' ? adminNav : patientNav;
+    document.body.appendChild(nav);
 }
 
 
