@@ -1,20 +1,2 @@
 To github.com:gaurav7080/medilab.git
-   7ffddfd..ac8e5d6  main -> main
-To github.com:gaurav7080/medilab.git
-   ac8e5d6..11fcdcd  main -> main
-To github.com:gaurav7080/medilab.git
-   11fcdcd..873e65a  main -> main
-To github.com:gaurav7080/medilab.git
-   873e65a..d5684c7  main -> main
-To github.com:gaurav7080/medilab.git
-   d5684c7..3c3f46e  main -> main
-To github.com:gaurav7080/medilab.git
-   3c3f46e..e7c5692  main -> main
-To github.com:gaurav7080/medilab.git
-   e7c5692..b5f29a0  main -> main
-To github.com:gaurav7080/medilab.git
-   b5f29a0..2824658  main -> main
-To github.com:gaurav7080/medilab.git
-   2824658..4b0450f  main -> main
-To github.com:gaurav7080/medilab.git
-   4b0450f..23068c6  main -> main
+   23068c6..edbc03a  main -> main
