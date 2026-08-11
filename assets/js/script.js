@@ -156,24 +156,24 @@ function renderTrendChart(metricType) {
 
     let dataPoints = [];
     let label = '';
-    let borderColor = '#00f2fe';
-    let gradientStart = 'rgba(0, 242, 254, 0.45)';
-    let gradientEnd = 'rgba(0, 242, 254, 0.02)';
+    let borderColor = '#14967f';
+    let gradientStart = 'rgba(20, 150, 127, 0.45)';
+    let gradientEnd = 'rgba(20, 150, 127, 0.02)';
     let unit = '';
 
     if (metricType === 'sugar') {
         dataPoints = currentTrendData.sugar;
         label = 'Blood Sugar';
-        borderColor = '#00f2fe';
-        gradientStart = 'rgba(0, 242, 254, 0.45)';
-        gradientEnd = 'rgba(0, 242, 254, 0.02)';
+        borderColor = '#14967f';
+        gradientStart = 'rgba(20, 150, 127, 0.45)';
+        gradientEnd = 'rgba(20, 150, 127, 0.02)';
         unit = ' mg/dL';
     } else if (metricType === 'cholesterol') {
         dataPoints = currentTrendData.cholesterol;
         label = 'Total Cholesterol';
-        borderColor = '#00c6ff';
-        gradientStart = 'rgba(0, 198, 255, 0.45)';
-        gradientEnd = 'rgba(0, 198, 255, 0.02)';
+        borderColor = '#095d7e';
+        gradientStart = 'rgba(9, 93, 126, 0.45)';
+        gradientEnd = 'rgba(9, 93, 126, 0.02)';
         unit = ' mg/dL';
     } else if (metricType === 'hemoglobin') {
         dataPoints = currentTrendData.hemoglobin;
@@ -207,12 +207,12 @@ function renderTrendChart(metricType) {
                 fill: true,
                 tension: 0.4,
                 pointBackgroundColor: borderColor,
-                pointBorderColor: '#0b1324',
+                pointBorderColor: '#ffffff',
                 pointBorderWidth: 2,
                 pointRadius: 6,
                 pointHoverRadius: 8,
                 pointHoverBackgroundColor: borderColor,
-                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderColor: '#095d7e',
                 pointHoverBorderWidth: 3
             }]
         },
@@ -224,10 +224,12 @@ function renderTrendChart(metricType) {
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(11, 19, 36, 0.95)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    titleColor: '#095d7e',
+                    bodyColor: '#14967f',
                     titleFont: { family: 'Rajdhani', size: 14, weight: 'bold' },
                     bodyFont: { family: 'Inter', size: 13 },
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderColor: 'rgba(9, 93, 126, 0.15)',
                     borderWidth: 1,
                     displayColors: false,
                     padding: 12,
@@ -241,21 +243,21 @@ function renderTrendChart(metricType) {
             scales: {
                 x: {
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.05)',
+                        color: 'rgba(9, 93, 126, 0.05)',
                         drawBorder: false
                     },
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.6)',
+                        color: 'rgba(9, 93, 126, 0.7)',
                         font: { family: 'Inter', size: 12 }
                     }
                 },
                 y: {
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.05)',
+                        color: 'rgba(9, 93, 126, 0.05)',
                         drawBorder: false
                     },
                     ticks: {
-                        color: 'rgba(255, 255, 255, 0.6)',
+                        color: 'rgba(9, 93, 126, 0.7)',
                         font: { family: 'Inter', size: 12 }
                     }
                 }

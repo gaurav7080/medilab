@@ -445,3 +445,30 @@
     .footer-grid { grid-template-columns: 1fr; }
     .cta-block { padding: 40px 20px; }
 }
+
+/* ==========================================
+   LIGHT THEME OVERRIDES (Clean Medical UI)
+   ========================================== */
+.explore-nav.scrolled { background: #ffffff !important; box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important; border-bottom: 1px solid #e2e8f0 !important; }
+.hero-particles { display: none !important; }
+.glow-text { text-shadow: none !important; color: var(--primary-color) !important; }
+.hero-glow-orb { display: none !important; }
+.about-card { background: #ffffff !important; box-shadow: 0 4px 20px rgba(9,93,126,0.05) !important; }
+.service-card { background: #ffffff !important; box-shadow: 0 4px 20px rgba(9,93,126,0.05) !important; }
+.stat-card { background: #ffffff !important; box-shadow: 0 4px 20px rgba(9,93,126,0.05) !important; }
+.testimonial-card { background: #ffffff !important; box-shadow: 0 4px 20px rgba(9,93,126,0.05) !important; }
+.cta-block { background: #ffffff !important; box-shadow: 0 4px 20px rgba(9,93,126,0.05) !important; border-color: #e2e8f0 !important; }
+.explore-footer { background: #e2fcd6 !important; border-top: none !important; }
+.btn-nav-ghost { color: #2c3e50 !important; border-color: #cbd5e1 !important; }
+.btn-nav-ghost:hover { background: #f8fafc !important; }
+.btn-nav-glow { color: #ffffff !important; box-shadow: 0 4px 10px rgba(20,150,127,0.2) !important; }
+.btn-hero-primary { background: #14967f !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(20,150,127,0.2) !important; }
+.btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(20,150,127,0.3) !important; color: #ffffff !important; }
+.btn-hero-outline { color: #2c3e50 !important; border-color: #cbd5e1 !important; }
+.section-tag { background: #e2fcd6 !important; border-color: #14967f !important; color: #14967f !important; }
+.mockup-card { background: #ffffff !important; border-color: #e2e8f0 !important; color: #2c3e50 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+.about-card:hover, .service-card:hover, .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(9,93,126,0.1) !important; border-color: rgba(20,150,127,0.3) !important; }
+
+body { background-color: #F4FAFA !important; }
+.hero-section { background-color: #F4FAFA !important; }
+.explore-section { background-color: #F4FAFA !important; }

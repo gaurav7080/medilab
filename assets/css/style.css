@@ -2,24 +2,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-    --primary-color: #00f2fe;
-    --primary-glow: rgba(0, 242, 254, 0.6);
-    --secondary-color: #4facfe;
+    --primary-color: #14967f;
+    --primary-glow: rgba(20, 150, 127, 0.2);
+    --secondary-color: #095d7e;
     --danger-color: #ff3366;
     --warning-color: #ffcc00;
-    --info-color: #00c6ff;
-    --success-color: #00f2fe;
-    --bg-dark: #080b12;
-    --bg-panel: rgba(15, 23, 42, 0.7);
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border-glass: rgba(255, 255, 255, 0.1);
-    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    --shadow-neon: 0 0 20px var(--primary-glow);
-    --card-radius: 20px;
-    --hologram-glow: rgba(0, 242, 254, 0.4);
-    --hologram-secondary: rgba(79, 172, 254, 0.4);
-    --cyber-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    --info-color: #3498db;
+    --success-color: #14967f;
+    --bg-dark: #F4FAFA;
+    --bg-panel: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #64748b;
+    --border-glass: #e2e8f0;
+    --shadow-glass: 0 4px 20px 0 rgba(9, 93, 126, 0.05);
+    --shadow-neon: 0 4px 15px rgba(9, 93, 126, 0.08);
+    --card-radius: 16px;
+    --hologram-glow: rgba(226, 252, 214, 0.4);
+    --hologram-secondary: rgba(204, 236, 238, 0.4);
+    --cyber-gradient: linear-gradient(135deg, #14967f 0%, #095d7e 100%);
 }
 
 * {
@@ -2072,3 +2072,45 @@ option {
 }
 
 
+
+/* ==========================================
+   LIGHT THEME OVERRIDES (Clean Medical UI)
+   ========================================== */
+body {
+    background-image: none !important;
+    background-color: var(--bg-dark) !important;
+}
+body::before { display: none !important; }
+.bg-orb { display: none !important; }
+.pulse-neon { filter: none !important; animation: none !important; }
+.navbar { background: #ffffff !important; }
+.sidebar { background: #ffffff !important; box-shadow: 2px 0 15px rgba(0,0,0,0.05) !important; }
+.form-control { background: #ffffff !important; color: #2c3e50 !important; border-color: #cbd5e1 !important; }
+.form-control:focus { background: #ffffff !important; box-shadow: 0 0 0 3px rgba(20, 150, 127, 0.15) !important; }
+.card { background: #ffffff !important; box-shadow: 0 4px 15px rgba(9, 93, 126, 0.08) !important; border: 1px solid #e2e8f0 !important; backdrop-filter: none !important; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(9, 93, 126, 0.15) !important; border-color: rgba(20,150,127,0.3) !important; }
+.card-header { background: #f8fafc !important; color: #2c3e50 !important; }
+.btn-primary { background: #14967f !important; color: #ffffff !important; box-shadow: 0 4px 10px rgba(20, 150, 127, 0.2) !important; border: none !important; }
+.btn-primary:hover { background: #095d7e !important; box-shadow: 0 6px 15px rgba(9, 93, 126, 0.2) !important; }
+.btn-outline-primary { color: #14967f !important; border-color: #14967f !important; }
+.btn-outline-primary:hover { background: #14967f !important; color: #ffffff !important; }
+.table { color: #2c3e50 !important; }
+.table thead th { border-bottom: 2px solid #e2e8f0 !important; background: #f8fafc !important; }
+.table-striped tbody tr:nth-of-type(odd) { background-color: #f8fafc !important; }
+.text-primary { color: #14967f !important; text-shadow: none !important; }
+h1, h2, h3, h4, h5, h6 { color: #095d7e !important; text-shadow: none !important; }
+.footer { background: #ccecee !important; color: #095d7e !important; border-top: none !important; }
+.footer-dark { background: #e2fcd6 !important; }
+.footer-col h5, .footer-col h6 { color: #095d7e !important; }
+.footer-col p, .footer-col a { color: #095d7e !important; opacity: 0.8; }
+.footer-bottom { border-top: 1px solid rgba(9, 93, 126, 0.1) !important; color: #095d7e !important; }
+.sidebar a { color: #2c3e50 !important; }
+.sidebar a:hover, .sidebar a.active { background: #e2fcd6 !important; color: #14967f !important; }
+.profile-menu { background: #ffffff !important; }
+.profile-menu .dropdown-item { color: #2c3e50 !important; }
+.profile-menu .dropdown-item:hover { background: #fff5e6 !important; color: #14967f !important; }
+.alert { background: #ffffff !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+.global-loader { background: #ffffff !important; }
+.dropdown-menu { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+.dropdown-item { color: #2c3e50 !important; }
+.text-muted { color: #64748b !important; }
